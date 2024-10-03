@@ -6,10 +6,9 @@ import { RecoilRoot } from "recoil";
 import { Bounce, ToastContainer } from "react-toastify";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+
     <RecoilRoot>
       <App />
      
     </RecoilRoot>
-  </StrictMode>
 );

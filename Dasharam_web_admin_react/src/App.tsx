@@ -6,6 +6,7 @@ import SubjectStdPage from "./pages/SubjectStdPage/SubjectStdPage";
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ManageTeacherPage from "./pages/Teacher/ManageTeacherPage";
+import ManageStudentPage from "./pages/Student/ManageStudentPage";
 
 function App() {
   return (
@@ -24,6 +25,10 @@ function App() {
           <Route
             path="/manage-teacher"
             element={<AdminAuthMiddleware children={<ManageTeacherPage />} />}
+          />
+          <Route
+            path="/manage-student"
+            element={<AdminAuthMiddleware children={<ManageStudentPage />} />}
           />
         </Routes>
       </Router>

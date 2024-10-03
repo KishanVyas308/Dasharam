@@ -33,6 +33,7 @@ export async function addStandard(name: string) {
     await addDoc(collection(db, "subjectStd"), {
       standard: name,
       subjects: [],
+      students  : [],
     });
     toast.success("Standard added successfully");
     return true;
@@ -182,3 +183,46 @@ export async function addTeacherIdsFromStdSub(
 }
 
 
+// TODO : addStudentIdToStdSub in students array
+export async function addStudentIdToStdSub(standardId: string, studentId: string) {
+  try {
+    const standardRef = doc(db, "subjectStd", standardId);
+    const docSnap = await getDoc(standardRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+
+      // If students array exists, append the new studentId, else initialize it
+      const updatedStudents = Array.isArray(data.students)
+        ? [...data.students, studentId]
+        : [studentId];
+
+      // Update the students array in Firestore
+      await updateDoc(standardRef, { students: updatedStudents });
+
+      console.log("Student ID added successfully");
+    } else {
+      console.log("Standard not found");
+    }
+  } catch (error) {
+    console.error("Error adding student ID:", error);
+  }
+}
+
+//TODO : delete student from subjectStd
+export async function deleteStudentFromStdSub(standardId: string, subjectName: string, studentId: string) {
+    try {
+      const standardRef = doc(db, "subjectStd", standardId);
+      const docSnap = await getDoc(standardRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const updatedSubjects = data.subjects.filter(
+          (subject: any) => subject.name !== subjectName
+        );
+        await updateDoc(standardRef, { subjects: updatedSubjects });
+        console.log("Subject removed successfully");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error removing subject");
+    } 
+}

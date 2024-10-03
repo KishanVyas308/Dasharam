@@ -9,6 +9,9 @@ const HomePage = () => {
     <Link to="/manage-teacher" className='text-2xl font-bold text-blue-500 hover:text-blue-700'>
           ManageTeacherPage
     </Link>
+    <Link to="/manage-student" className='text-2xl font-bold text-blue-500 hover:text-blue-700'>    
+          ManageStudentPage
+    </Link>
     </div>
   )
 }
