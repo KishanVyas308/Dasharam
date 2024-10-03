@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { useRecoilState } from "recoil";
 import { teachersAtom } from "../../state/teachersAtom";
 import { addTeacher, deleteTeacher, getAllTeachers } from "../../backend/handleTeacher";

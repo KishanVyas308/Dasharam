@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { stdSubAtom } from "../../state/stdSubAtom";
 import {
@@ -23,9 +23,6 @@ const TestSubjectStdPage = () => {
   const [editStdName, setEditStdName] = useState("");
   const [editStdId, setEditStdId] = useState("");
 
-  const [isEditingSubjectName, setIsEditingSubjectName] = useState(false);
-  const [editSubjectName, setEditSubjectName] = useState("");
-  const [editSubjectId, setEditSubjectId] = useState("");
 
 
 

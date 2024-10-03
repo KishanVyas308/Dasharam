@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useRecoilState } from "recoil";
+import  { useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { stdSubAtom } from "../../state/stdSubAtom";
 import { teachersAtom } from "../../state/teachersAtom";
 import { addTeacherIdsFromStdSub } from "../../backend/subjectStdHandle";
@@ -8,7 +8,7 @@ const AssignTeacher = () => {
   const [standardId, setStandardId] = useState("");
   const [subjectName, setSubjectName] = useState("");
   const [teacherId, setTeacherId] = useState("");
-  const [standards, setStandards] = useRecoilState(stdSubAtom);
+  const standards = useRecoilValue(stdSubAtom)
   const [teachers] = useRecoilState(teachersAtom);
 
   const handleAssignTeacher = async () => {
