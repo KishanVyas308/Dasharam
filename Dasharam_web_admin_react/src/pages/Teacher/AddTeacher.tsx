@@ -1,21 +1,27 @@
 import React, { useState } from "react";
 import { useRecoilState } from "recoil";
 import { teachersAtom } from "../../state/teachersAtom";
-import { addTeacher, getAllTeachers } from "../../backend/handleTeacher";
+import { addTeacher, deleteTeacher, getAllTeachers } from "../../backend/handleTeacher";
 
 const AddTeacher = () => {
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [mobileNo, setMobileNo] = useState("");
   const [teachers, setTeachers] = useRecoilState(teachersAtom);
 
   const handleAddTeacher = async () => {
-    if (name && email) {
-      await addTeacher(name, email);
+    if (name && mobileNo) {
+      await addTeacher(name, mobileNo);
       const updatedTeachers = await getAllTeachers(); // Fetch updated teachers list
       setTeachers(updatedTeachers);
       setName("");
-      setEmail("");
+      setMobileNo("");
     }
+  };
+
+  const handleDeleteTeacher = async (teacherId: string) => {
+    await deleteTeacher(teacherId);
+    const updatedTeachers = await getAllTeachers(); // Fetch updated teachers list
+    setTeachers(updatedTeachers);
   };
 
   return (
@@ -30,10 +36,10 @@ const AddTeacher = () => {
       />
       <input
       className="w-full p-2 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary-100"
-        type="email"
-        placeholder="Teacher Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        type="text"
+        placeholder="Teacher Mobile No."
+        value={mobileNo}
+        onChange={(e) => setMobileNo(e.target.value)}
       />
       <button onClick={handleAddTeacher} className="mt-3 px-4 py-2 bg-secondary text-white rounded-lg hover:bg-secondary-100">Add Teacher</button>
 
@@ -41,7 +47,9 @@ const AddTeacher = () => {
       <ul className="space-y-4">
         {teachers.map((teacher : any) => (
           <li key={teacher.id} className="bg-gray-100 p-4 rounded-lg shadow-md">
-            {teacher.name} - {teacher.email}
+            {teacher.name} - {teacher.mobileNo}
+
+            <button onClick={() => handleDeleteTeacher(teacher.id)} className="ml-2 px-4 py-2 bg-red-500 text-white rounded-lg">Delete</button>
           </li>
         ))}
       </ul>

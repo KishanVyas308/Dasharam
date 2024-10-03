@@ -1,7 +1,16 @@
-import { addDoc, collection, getDoc, query, setDoc, doc, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDoc,
+  query,
+  setDoc,
+  doc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "./firebase";
 import { toast } from "react-toastify";
-
 
 // Get all standards with their subjects
 export async function getAllStdSub() {
@@ -22,7 +31,10 @@ export async function getAllStdSub() {
 // Add a new standard
 export async function addStandard(name: string) {
   try {
-    await addDoc(collection(db, "subjectStd"), { standard: name, subjects: [] });
+    await addDoc(collection(db, "subjectStd"), {
+      standard: name,
+      subjects: [],
+    });
     toast.success("Standard added successfully");
     return true;
   } catch (error) {
@@ -32,7 +44,11 @@ export async function addStandard(name: string) {
 }
 
 // Add subjects to a standard
-export async function addSubjectsInStandard(standardId: string, newSubjects: string[]) {
+// Add subjects to a standard (with teacherIds)
+export async function addSubjectsInStandard(
+  standardId: string,
+  newSubjects: { name: string }[]
+) {
   try {
     const standardRef = doc(db, "subjectStd", standardId);
 
@@ -41,11 +57,24 @@ export async function addSubjectsInStandard(standardId: string, newSubjects: str
     if (docSnap.exists()) {
       const currentSubjects = docSnap.data().subjects || [];
 
-      // Combine current subjects with new subjects, and remove duplicates
-      const updatedSubjects = [...new Set([...currentSubjects, ...newSubjects])];
+      // Add the new subjects while avoiding duplicates by subject name
+      const updatedSubjects = [
+        ...currentSubjects,
+        ...newSubjects.filter(
+          (newSub) =>
+            !currentSubjects.some((sub: any) => sub.name === newSub.name)
+        ),
+      ];
+
+      // add teacherIds to subjects
+      const updatedSubjectsWithTeacherIds = updatedSubjects.map((sub: any) => {
+        const teacherIds = sub.teacherIds || [];
+        return { ...sub, teacherIds };
+      });
 
       // Update Firestore document with the combined subjects
-      await updateDoc(standardRef, { subjects: updatedSubjects });
+      await updateDoc(standardRef, { subjects: updatedSubjectsWithTeacherIds });
+      console.log(updatedSubjectsWithTeacherIds);
 
       toast.success("Subjects added successfully");
       return true;
@@ -81,36 +110,76 @@ export async function updateStandardName(standardId: string, newName: string) {
   try {
     const standardRef = doc(db, "subjectStd", standardId);
     await updateDoc(standardRef, { standard: newName });
+    toast.success("Standard name updated successfully");
   } catch (error) {
+    toast.error("Error updating standard name");
     console.log(error);
   }
 }
 
-// Remove a subject from a standard
-export async function removeSubjectFromStandard(standardId: string, subjectName: string) {
+// Remove a subject from a standard (by subject name)
+export async function removeSubjectFromStandard(
+  standardId: string,
+  subjectName: string
+) {
   try {
     const standardRef = doc(db, "subjectStd", standardId);
     const docSnap = await getDoc(standardRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
-      const updatedSubjects = data.subjects.filter((subject: string) => subject !== subjectName);
+      const updatedSubjects = data.subjects.filter(
+        (subject: any) => subject.name !== subjectName
+      );
       await updateDoc(standardRef, { subjects: updatedSubjects });
+      toast.success("Subject removed successfully");
     }
   } catch (error) {
+    toast.error("Error removing subject");
     console.log(error);
   }
 }
-
 // Delete a standard
 export async function deleteStandard(standardId: string) {
   try {
     const standardRef = doc(db, "subjectStd", standardId);
     await deleteDoc(standardRef);
+    toast.success("Standard deleted successfully");
   } catch (error) {
     console.log(error);
+    toast.error("Error deleting standard");
   }
 }
 
+// add teachers id in array
+export async function addTeacherIdsFromStdSub(
+  standardId: string,
+  subjectName: string,
+  teacherId: string
+) {
+  try {
+    const standardRef = doc(db, "subjectStd", standardId);
+    const docSnap = await getDoc(standardRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const subjects = data.subjects.map((subject: any) => {
+        if (subject.name === subjectName) {
+          // Check if teacherIds is an array and append to it, or initialize it if not
+          const updatedTeacherIds = Array.isArray(subject.teacherIds)
+            ? [...subject.teacherIds, teacherId]
+            : [teacherId];
 
+          return { ...subject, teacherIds: updatedTeacherIds };
+        }
+        return subject;
+      });
+      await updateDoc(standardRef, { subjects });
+      console.log("Subjects updated successfully");
+    }
+    toast.success("Subjects updated successfully");
+  } catch (error) {
+    toast.error("Error updating subjects");
+    console.log(error);
+  }
+}
 
 

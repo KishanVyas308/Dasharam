@@ -1,12 +1,15 @@
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc } from "firebase/firestore";
 import { db } from "./firebase";
+import { toast } from "react-toastify";
 
 
 // Add a new teacher
-export async function addTeacher(name: string, email: string) {
+export async function addTeacher(name: string, mobileNo: string) {
   try {
-    await addDoc(collection(db, "teachers"), { name, email, subject_ids: [] });
+    await addDoc(collection(db, "teachers"), { name, mobileNo});
+    toast.success("Teacher added successfully");
   } catch (error) {
+    toast.error("Error adding teacher");
     console.log(error);
   }
 }
@@ -15,7 +18,17 @@ export async function addTeacher(name: string, email: string) {
 export async function assignSubjectsToTeacher(teacherId: string, subjectIds: string[]) {
   try {
     const teacherRef = doc(db, "teachers", teacherId);
-    await updateDoc(teacherRef, { subject_ids: subjectIds });
+    const data = await getDoc(teacherRef);
+    if (data.exists()) {
+      const currentSubjectToTeacher = data.data().subject_ids || [];
+      const updatedSubjectToTeacher = [...new Set([...currentSubjectToTeacher, ...subjectIds])];
+      await updateDoc(teacherRef, { subject_ids: updatedSubjectToTeacher });
+      toast.success("Subjects assigned successfully");
+      return true;
+    } else {      
+      toast.error("Teacher does not exist");
+      return false;
+    }
   } catch (error) {
     console.log(error);
   }
@@ -57,28 +70,14 @@ export async function getAllTeachers() {
     try {
       const teacherRef = doc(db, "teachers", teacherId);
       await deleteDoc(teacherRef);
+      toast.success("Teacher deleted successfully");
     } catch (error) {
+      toast.error("Error deleting teacher");
       console.log(error);
     }
   }
   
   // Assign teacher to a subject within a standard
-  export async function assignTeacherToSubject(standardId: string, subjectName: string, teacherId: string) {
-    try {
-      const standardRef = doc(db, "subjectStd", standardId);
-      const docSnap = await getDoc(standardRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        const subjects = data.subjects.map((subject: any) => {
-          if (subject.name === subjectName) {
-            return { ...subject, teacherId };
-          }
-          return subject;
-        });
-        await updateDoc(standardRef, { subjects });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
+ 
   
