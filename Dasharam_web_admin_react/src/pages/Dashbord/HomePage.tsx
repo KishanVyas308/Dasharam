@@ -12,6 +12,9 @@ const HomePage = () => {
     <Link to="/manage-student" className='text-2xl font-bold text-blue-500 hover:text-blue-700'>    
           ManageStudentPage
     </Link>
+    <Link to="/manage-test" className='text-2xl font-bold text-blue-500 hover:text-blue-700'>    
+          Manage Test
+    </Link>
     </div>
   )
 }

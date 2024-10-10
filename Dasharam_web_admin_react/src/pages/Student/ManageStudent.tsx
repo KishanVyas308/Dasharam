@@ -18,23 +18,23 @@ const ManageStudent = () => {
 
 
 
-  useEffect(() => {
-    async function fetchStudents() {
-      if (students.length === 0) {
-        const data = await getAllStudents();
-        setStudents(data);
-      }
-      if (subjects.length === 0) {
-        const data = await getAllStdSub();
-        setSubjects(data);
-      }
+  async function fetchStudents() {
+    if (students.length === 0) {
+      const data = await getAllStudents();
+      setStudents(data);
     }
+    if (subjects.length === 0) {
+      const data = await getAllStdSub();
+      setSubjects(data);
+    }
+  }
+  useEffect(() => {
     fetchStudents();
   }, []);
 
 
-  const handleDeleteStudent = async (studentId: string) => {
-    await deleteStudent(studentId);
+  const handleDeleteStudent = async (studentId: string, subjectId: string) => {
+    await deleteStudent(studentId, subjectId);
     const updatedStudents = await getAllStudents();
     setStudents(updatedStudents);
   } 
@@ -57,7 +57,7 @@ const ManageStudent = () => {
               {subject.students.map((id: any) => (
                 <div>
                   {students.find((student: any) => student.id === id)?.name}  
-                  <button onClick={() => handleDeleteStudent(id)} className="bg-red-500 text-white px-4 py-2 rounded-lg">Delete</button>
+                  <button onClick={() => handleDeleteStudent(id, subject.id)} className="bg-red-500 text-white px-4 py-2 rounded-lg">Delete</button>
                 </div>
               ))}
             </div>

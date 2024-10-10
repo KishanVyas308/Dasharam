@@ -19,14 +19,14 @@ const AddStudent = () => {
 
     const [standard, setStandard] = useRecoilState(stdSubAtom);
 
-    useEffect(() => {
-        async function fetchStandardsSub() {
-            if (standard.length === 0) {
-                const data = await getAllStdSub();
-                setStandard(data);
-            }
-            console.log(standard);
+    async function fetchStandardsSub() {
+        if (standard.length === 0) {
+            const data = await getAllStdSub();
+            setStandard(data);
         }
+        console.log(standard);
+    }
+    useEffect(() => {
         fetchStandardsSub();
     }, [standard]);
 
@@ -43,6 +43,7 @@ const AddStudent = () => {
             setPassword("");
             setStandardId("");
         }
+        fetchStandardsSub()
     }
 
   return (
