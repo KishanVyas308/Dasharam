@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "./firebase";
 import { toast } from "react-toastify";
 
@@ -47,7 +47,9 @@ export async function getAllTests() {
     }
 }
 
-// todo: get test by student id
+// todo: retrive all student id from test
+
+// todo: retrive all student details from ides
 
 
 // todo: delete test

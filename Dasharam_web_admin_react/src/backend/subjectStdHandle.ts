@@ -226,3 +226,30 @@ export async function deleteStudentFromStdSub(standardId: string, subjectName: s
       toast.error("Error removing subject");
     } 
 }
+
+
+
+//TODO : delete id from students array
+export async function deleteStudentIdFromStdSub(standardId: string, studentId: string) {
+  try {
+    const standardRef = doc(db, "subjectStd", standardId);
+    const docSnap = await getDoc(standardRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+
+      // If students array exists, append the new studentId, else initialize it
+      const updatedStudents = data.students.filter(
+        (student: any) => student !== studentId
+      );
+
+      // Update the students array in Firestore
+      await updateDoc(standardRef, { students: updatedStudents });
+
+      console.log("Student ID removed successfully");
+    }
+   
+  } catch (error) {
+    toast.error("Error removing student ID");
+    console.error("Error removing student ID:", error);
+  }
+}

@@ -1,7 +1,7 @@
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import { toast } from "react-toastify";
-import { addStudentIdToStdSub } from "./subjectStdHandle";
+import { addStudentIdToStdSub, deleteStudentIdFromStdSub } from "./subjectStdHandle";
 
 // student collection
 // [
@@ -70,10 +70,11 @@ export async function getStudentById(studentId: string) {
 }
 
 // TODO: delete student
-export async function deleteStudent(studentId: string) {
+export async function deleteStudent(studentId: string, standardId: string) {
     try {
         const studentRef = doc(db, "students", studentId);
         await deleteDoc(studentRef);
+        await deleteStudentIdFromStdSub(standardId, studentId);
         toast.success("Student deleted successfully");
     } catch (error) {
         toast.error("Error deleting student");
