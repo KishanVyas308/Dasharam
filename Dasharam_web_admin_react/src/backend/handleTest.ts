@@ -24,11 +24,13 @@ import { toast } from "react-toastify";
 // todo: add test
 export async function addTest(name: string, standardId: string, subject: string, takenByTeacherId: string, totalMarks: string, takenDate: string, studentIds: string[]) {
     try {
-        await addDoc(collection(db, "tests"), { name, standardId, subject, takenByTeacherId, totalMarks, takenDate, studentIds });
-        toast.success("Test added successfully");
+       const data =  await addDoc(collection(db, "tests"), { name, standardId, subject, takenByTeacherId, totalMarks, takenDate, students: studentIds });
+       toast.success("Test added successfully");
+       return { id: data.id, name, standardId, subject, takenByTeacherId, totalMarks, takenDate, students: studentIds };
     } catch (error) {
         toast.error("Error adding test");
         console.log(error);
+        return null;
     }
 }
 // todo: get all test
