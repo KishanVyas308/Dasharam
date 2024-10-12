@@ -1,7 +1,18 @@
-import  { useState } from "react";
+
+import { TextField, Button, Container, Typography, List, ListItem, ListItemText, IconButton, Box } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { styled } from "@mui/system";
+import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { teachersAtom } from "../../state/teachersAtom";
 import { addTeacher, deleteTeacher, getAllTeachers } from "../../backend/handleTeacher";
+
+const StyledContainer = styled(Container)({
+  backgroundColor: "#fff",
+  padding: "2rem",
+  borderRadius: "8px",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+});
 
 const AddTeacher = () => {
   const [name, setName] = useState("");
@@ -25,35 +36,65 @@ const AddTeacher = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-3xl font-pbold text-primary my-4">Add Teacher</h2>
-      <input
-      className="w-full p-2 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary-100"
-        type="text"
-        placeholder="Teacher Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-      className="w-full p-2 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary-100"
-        type="text"
-        placeholder="Teacher Mobile No."
-        value={mobileNo}
-        onChange={(e) => setMobileNo(e.target.value)}
-      />
-      <button onClick={handleAddTeacher} className="mt-3 px-4 py-2 bg-secondary text-white rounded-lg hover:bg-secondary-100">Add Teacher</button>
-
-      <h3 className="text-xl font-pmedium text-black-200">Teacher List</h3>
-      <ul className="space-y-4">
-        {teachers.map((teacher : any) => (
-          <li key={teacher.id} className="bg-gray-100 p-4 rounded-lg shadow-md">
-            {teacher.name} - {teacher.mobileNo}
-
-            <button onClick={() => handleDeleteTeacher(teacher.id)} className="ml-2 px-4 py-2 bg-red-500 text-white rounded-lg">Delete</button>
-          </li>
+    <StyledContainer maxWidth="sm">
+      <Typography variant="h4" component="h2" gutterBottom>
+        Add Teacher
+      </Typography>
+      <Box component="form" noValidate autoComplete="off" mb={4}>
+        <TextField
+          fullWidth
+          label="Teacher Name"
+          variant="outlined"
+          margin="normal"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <TextField
+          fullWidth
+          label="Teacher Mobile No."
+          variant="outlined"
+          margin="normal"
+          value={mobileNo}
+          onChange={(e) => setMobileNo(e.target.value)}
+        />
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          onClick={handleAddTeacher}
+          sx={{ mt: 2 }}
+        >
+          Add Teacher
+        </Button>
+      </Box>
+      <Typography variant="h5" component="h3" gutterBottom>
+        Teacher List
+      </Typography>
+      <List>
+        {teachers.map((teacher: any) => (
+          <ListItem
+            key={teacher.id}
+            sx={{
+              backgroundColor: "#f9f9f9",
+              borderRadius: "8px",
+              mb: 2,
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+            }}
+            secondaryAction={
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={() => handleDeleteTeacher(teacher.id)}
+              >
+                <DeleteIcon color="error" />
+              </IconButton>
+            }
+          >
+            <ListItemText primary={`${teacher.name} - ${teacher.mobileNo}`} />
+          </ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </StyledContainer>
   );
 };
 

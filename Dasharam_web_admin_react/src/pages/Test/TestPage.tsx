@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { testsState } from "../../state/testsAtom";
+import { teastsAtom } from "../../state/testsAtom";
 import { getAllTests } from "../../backend/handleTest";
 import AddTest from "./AddTest";
 import ManageTest from "./ManageTest";
 
 const TestPage = () => {
-  const [tests, setTests] = useRecoilState(testsState);
+  const [tests, setTests] = useRecoilState(teastsAtom);
 
   useEffect(() => {
     async function fatchTest() {

@@ -1,14 +1,15 @@
 import { useState, useMemo } from "react";
-import { useRecoilValue } from "recoil";
-import { testsState } from "../../state/testsAtom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { teastsAtom } from "../../state/testsAtom";
 import { teachersAtom } from "../../state/teachersAtom";
 import { studentsAtom } from "../../state/studentsAtom";
 import { stdSubAtom } from "../../state/stdSubAtom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { addTest } from "../../backend/handleTest";
 
 const AddTest = () => {
-  const test = useRecoilValue(testsState);
+  const [tests, setTests ] = useRecoilState(teastsAtom);
   const teachers = useRecoilValue(teachersAtom);
   const students = useRecoilValue(studentsAtom);
   const stdSub = useRecoilValue(stdSubAtom);
@@ -47,6 +48,7 @@ const AddTest = () => {
     );
     setSelectedStdStudents(updatedStudents);
   };
+
 
   return (
     <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8 mt-8">
@@ -155,7 +157,7 @@ const AddTest = () => {
 
       <div className="mt-8 flex justify-end">
         <button
-          onClick={() => {
+          onClick={async ()  => {
             console.log({
               name,
               standardId,
@@ -165,6 +167,10 @@ const AddTest = () => {
               takenDate,
               selectedStdStudents,
             });
+            const res =  await addTest(name, standardId, subject, takenByTeacherId, totalMarks, takenDate?.toISOString() || "", selectedStdStudents);
+            if (res) {
+              setTests([...tests, res]);
+            }
           }}
           className="btn-primary"
         >
