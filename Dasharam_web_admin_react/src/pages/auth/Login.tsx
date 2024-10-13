@@ -10,14 +10,15 @@ const Login = () => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const [currentAdmin, setCurrentAdmin] = useRecoilState(currentAdminState);
+  const [currentAdmin, setCurrentAdmin] = useRecoilState<any>(currentAdminState);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const admin = await login(name, password);
-    if (admin) {
+    if (admin != null) {
       Cookies.set('user', JSON.stringify(admin), { expires: 0.25 }); // 6 hours
       setCurrentAdmin(admin);
+      alert('Login Successful');
       navigate('/');
     } else {
       alert('Invalid Email or Password');

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { teastsAtom } from "../../state/testsAtom";
 import { teachersAtom } from "../../state/teachersAtom";
@@ -7,18 +7,28 @@ import { stdSubAtom } from "../../state/stdSubAtom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addTest } from "../../backend/handleTest";
+import {
+  Container,
+  Typography,
+  Grid as Grid2,
+  TextField,
+  MenuItem,
+  Button,
+  Paper,
+  Box,
+} from "@mui/material";
 
 const AddTest = () => {
-  const [tests, setTests ] = useRecoilState(teastsAtom);
+  const [tests, setTests] = useRecoilState(teastsAtom);
   const teachers = useRecoilValue(teachersAtom);
   const students = useRecoilValue(studentsAtom);
   const stdSub = useRecoilValue(stdSubAtom);
 
-  const [name, setName] = useState("");
-  const [standardId, setStandardId] = useState("");
-  const [subject, setSubject] = useState("");
-  const [takenByTeacherId, setTakenByTeacherId] = useState("");
-  const [totalMarks, setTotalMarks] = useState("0");
+  const [name, setName] = useState<string>("");
+  const [standardId, setStandardId] = useState<string>("");
+  const [subject, setSubject] = useState<string>("");
+  const [takenByTeacherId, setTakenByTeacherId] = useState<string>("");
+  const [totalMarks, setTotalMarks] = useState<string>("0");
   const [takenDate, setTakenDate] = useState<Date | null>(null);
   const [selectedStdStudents, setSelectedStdStudents] = useState<any>([]);
 
@@ -27,7 +37,7 @@ const AddTest = () => {
   }, [students, standardId]);
 
   const handleStdChange = (e: any) => {
-    const selectedStdId = e.target.value;
+    const selectedStdId = e.target.value || "";
     setStandardId(selectedStdId);
 
     const selectedStudents = students
@@ -43,141 +53,167 @@ const AddTest = () => {
   const handleMarksChange = (studentId: string, newMarks: string) => {
     const updatedStudents = selectedStdStudents.map((student: any) =>
       student.studentId === studentId
-        ? { ...student, marks: newMarks }
+        ? { ...student, marks: newMarks || "0" }
         : student
     );
     setSelectedStdStudents(updatedStudents);
   };
 
-
   return (
-    <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8 mt-8">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Add Test</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <input
-          type="text"
-          placeholder="Test Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="input-field"
-        />
-
-        <select
-          value={standardId}
-          onChange={handleStdChange}
-          className="input-field"
-        >
-          <option value="" className="text-gray-400">
-            Select Standard
-          </option>
-          {stdSub.map((std: any) => (
-            <option key={std.id} value={std.id}>
-              {std.standard}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-          className="input-field"
-        >
-          <option value="" className="text-gray-400">
-            Select Subject
-          </option>
-          {stdSub
-            .find((std: any) => std.id === standardId)
-            ?.subjects.map((sub: any) => (
-              <option key={sub.id} value={sub.id}>
-                {sub.name}
-              </option>
-            ))}
-        </select>
-
-        <select
-          value={takenByTeacherId}
-          onChange={(e) => setTakenByTeacherId(e.target.value)}
-          className="input-field"
-        >
-          <option value="" className="text-gray-400">
-            Select Teacher
-          </option>
-          {teachers.map((teacher: any) => (
-            <option key={teacher.id} value={teacher.id}>
-              {teacher.name}
-            </option>
-          ))}
-        </select>
-
-        <input
-          type="number"
-          placeholder="Total Marks"
-          value={totalMarks}
-          onFocus={(e) => e.target.select()}
-          onChange={(e) => setTotalMarks(e.target.value)}
-          className="input-field"
-        />
-
-        <DatePicker
-          selected={takenDate}
-          onChange={(date: Date | null) => setTakenDate(date)}
-          placeholderText="Select Date"
-          className="input-field"
-          dateFormat="dd/MM/yyyy"
-        />
-      </div>
-
-      <h3 className="text-xl font-semibold text-gray-700 mt-8 mb-4">
-        Assign Marks to Students
-      </h3>
-
-      <div className="space-y-4">
-        {filteredStudents.map((student: any) => (
-          <div
-            key={student.id}
-            className="flex items-center justify-between bg-gray-50 rounded-lg p-4"
-          >
-            <span className="text-gray-600">{student.name}</span>
-            <div>
-            {totalMarks } <span className="text-black-200 text-[20px]"> / </span> 
-            <input
-              type="number"
-              value={
-                selectedStdStudents.find((s: any) => s.studentId === student.id)
-                ?.marks || ""
-              }
-              onFocus={(e) => e.target.select()}
-              onChange={(e) => handleMarksChange(student.id, e.target.value)}
-              className={`w-20 p-2 rounded-md border border-gray-300 focus:outline-none focus:border-indigo-500  `}
-              />
-              </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-8 flex justify-end">
-        <button
-          onClick={async ()  => {
-            console.log({
-              name,
-              standardId,
-              subject,
-              takenByTeacherId,
-              totalMarks,
-              takenDate,
-              selectedStdStudents,
-            });
-            const res =  await addTest(name, standardId, subject, takenByTeacherId, totalMarks, takenDate?.toISOString() || "", selectedStdStudents);
-            if (res) {
-              setTests([...tests, res]);
-            }
-          }}
-          className="btn-primary"
-        >
+    <Container maxWidth="md">
+      <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
           Add Test
-        </button>
-      </div>
-    </div>
+        </Typography>
+        <Grid2 container spacing={3}>
+          <Grid2 item xs={12} sm={6}>
+            <TextField
+              label="Test Name"
+              value={name || ""}
+              onChange={(e) => setName(e.target.value)}
+              fullWidth
+            />
+          </Grid2>
+          <Grid2 item xs={12} sm={6}>
+            <TextField
+              select
+              label="Select Standard"
+              value={standardId || ""}
+              onChange={handleStdChange}
+              fullWidth
+            >
+              <MenuItem value="">
+                <em>Select Standard</em>
+              </MenuItem>
+              {stdSub.map((std: any) => (
+                <MenuItem key={std.id} value={std.id}>
+                  {std.standard}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid2>
+          <Grid2 item xs={12} sm={6}>
+            <TextField
+              select
+              label="Select Subject"
+              value={subject || ""}
+              onChange={(e) => setSubject(e.target.value)}
+              fullWidth
+            >
+              <MenuItem value="">
+                <em>Select Subject</em>
+              </MenuItem>
+              {stdSub
+                .find((std: any) => std.id === standardId)
+                ?.subjects.map((sub: any) => (
+                  <MenuItem key={sub.id} value={sub.name}>
+                    {sub.name}
+                  </MenuItem>
+                ))}
+            </TextField>
+          </Grid2>
+          <Grid2 item xs={12} sm={6}>
+            <TextField
+              select
+              label="Select Teacher"
+              value={takenByTeacherId || ""}
+              onChange={(e) => setTakenByTeacherId(e.target.value)}
+              fullWidth
+            >
+              <MenuItem value="">
+                <em>Select Teacher</em>
+              </MenuItem>
+              {teachers.map((teacher: any) => (
+                <MenuItem key={teacher.id} value={teacher.id}>
+                  {teacher.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid2>
+          <Grid2 item xs={12} sm={6}>
+            <TextField
+              type="number"
+              label="Total Marks"
+              value={totalMarks || "0"}
+              onFocus={(e) => e.target.select()}
+              onChange={(e) => setTotalMarks(e.target.value)}
+              fullWidth
+            />
+          </Grid2>
+          <Grid2 item xs={12} sm={6}>
+            <DatePicker
+              selected={takenDate}
+              onChange={(date: Date | null) => setTakenDate(date)}
+              placeholderText="Select Date"
+              className="input-field"
+              dateFormat="dd/MM/yyyy"
+              customInput={<TextField label="Select Date" fullWidth />}
+            />
+          </Grid2>
+        </Grid2>
+
+        <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+          Assign Marks to Students
+        </Typography>
+
+        <Box sx={{ mb: 4 }}>
+          {filteredStudents.map((student: any) => (
+            <Paper
+              key={student.id}
+              sx={{ p: 2, mb: 2, display: "flex", justifyContent: "space-between" }}
+            >
+              <Typography>{student.name}</Typography>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <TextField
+                  type="number"
+                  size="small"
+                  value={
+                    selectedStdStudents.find((s: any) => s.studentId === student.id)
+                      ?.marks || "0"
+                  }
+                  onFocus={(e) => e.target.select()}
+                  onChange={(e) => handleMarksChange(student.id, e.target.value)}
+                  sx={{ width: 70, mr: 2 }}
+                />
+                <Typography>/ <span> </span> {totalMarks}</Typography>
+              </Box>
+            </Paper>
+          ))}
+        </Box>
+
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={async () => {
+              console.log({
+                name,
+                standardId,
+                subject,
+                takenByTeacherId,
+                totalMarks,
+                takenDate,
+                selectedStdStudents,
+              });
+              const res = await addTest(
+                name,
+                standardId,
+                subject,
+                takenByTeacherId,
+                totalMarks,
+                takenDate?.toISOString() || "",
+                selectedStdStudents
+              );
+              if (res) {
+                setTests([...tests, res]);
+              }
+            }}
+          >
+            Add Test
+          </Button>
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 

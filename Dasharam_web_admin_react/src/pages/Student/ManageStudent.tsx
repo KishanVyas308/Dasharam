@@ -5,16 +5,31 @@ import { useEffect, useState } from "react";
 import { deleteStudent, getAllStudents } from "../../backend/handleStudent";
 import { getAllStdSub } from "../../backend/subjectStdHandle";
 
+import {
+  Container,
+  Typography,
+  Grid,
+  Paper,
+  IconButton,
+  Box,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  Divider,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { styled } from "@mui/system";
+
+const StandardTitle = styled(Typography)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+  fontWeight: 600,
+  color: "black"
+}));
+
 const ManageStudent = () => {
   const [students, setStudents] = useRecoilState(studentsAtom);
   const [subjects, setSubjects] = useRecoilState(stdSubAtom);
-
-  const [name, setName] = useState("");
-  const [parentName, setParentName] = useState("");
-  const [parentMobileNo, setParentMobileNo] = useState("");
-  const [grNo, setGrNo] = useState("");
-  const [password, setPassword] = useState("");
-  const [standardId, setStandardId] = useState("");
 
   async function fetchStudents() {
     if (students.length === 0) {
@@ -40,32 +55,43 @@ const ManageStudent = () => {
   };
 
   return (
-    <div className="container mx-auto p-8 bg-white shadow-lg rounded-lg">
-      <h2 className="text-4xl font-bold text-primary mb-6">Manage Students</h2>
-      {subjects.map((subject: any) => (
-        <div key={subject.id} className="mb-8">
-          <h3 className="text-2xl font-semibold text-secondary mb-4">
-            {subject.standard}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {subject.students.map((id: any) => {
-              const student = students.find((student: any) => student.id === id);
-              return (
-                <div key={id} className="bg-gray-100 p-4 rounded-lg shadow-md flex justify-between items-center">
-                  <span className="text-lg font-medium">{student?.name}</span>
-                  <button
-                    onClick={() => handleDeleteStudent(id, subject.id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
-                  >
-                    Delete
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ))}
-    </div>
+    <Container>
+      <Box py={5}>
+        <Typography variant="h3" color="primary" gutterBottom>
+          Manage Students
+        </Typography>
+
+        {subjects.map((subject: any) => (
+          <Box key={subject.id} mb={4}>
+            <StandardTitle variant="h5">{subject.standard}</StandardTitle>
+            <Divider sx={{ mb: 3 }} />
+            <Grid container spacing={3}>
+              {subject.students.map((id: any) => {
+                const student = students.find((student: any) => student.id === id);
+                return (
+                  <Grid item xs={12} sm={6} md={4} key={id}>
+                    <Card variant="outlined" sx={{ backgroundColor: "#f9f9f9" }}>
+                      <CardContent className="flex justify-between items-center ">
+                        <Typography variant="h6" >
+                          {student?.name || "Unknown Student"}
+                        </Typography>
+                        <IconButton
+                          color="error"
+                          onClick={() => handleDeleteStudent(id, subject.id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                       
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </Box>
+        ))}
+      </Box>
+    </Container>
   );
 };
 
