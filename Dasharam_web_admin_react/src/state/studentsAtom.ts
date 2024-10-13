@@ -1,6 +1,10 @@
-import {atom} from "recoil";
+import { atom } from 'recoil';
+import { Student } from '../types/type';
 
 export const studentsAtom = atom({
-    key: "students",
-    default: [] as any
-})
+  key: 'studentsAtom',
+  default: [] as Student[], // Define Student type elsewhere
+});
+
+
+
