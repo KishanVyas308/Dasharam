@@ -132,6 +132,7 @@ const TestSubjectStdPage = () => {
                       value={editStdName}
                       onChange={(e) => setEditStdName(e.target.value)}
                     />
+                    
                     <Box ml={2} display='flex'>
                       <IconButton onClick={() => handeUpdateStandardName(standard.id)}>
                         <Save color="success" />
@@ -144,6 +145,7 @@ const TestSubjectStdPage = () => {
                 ) : (
                   <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6">{standard.standard}</Typography>
+                    
                     <Box ml={2} >
                       <IconButton onClick={() => {
                         setIsEditStdName(true);
@@ -170,23 +172,43 @@ const TestSubjectStdPage = () => {
                   <Button
                     sx={{ mt: 1 }}
                     variant="contained"
-                    color="secondary"
+                    color="primary"
                     onClick={() => handleAddStandardSubjects(standard.id, addSubjTexts[standard.id])}
                   >
                     Add Subjects
                   </Button>
                 </Box>
+                <Box marginTop={'10px'}>
+                  <Typography className="">
+                    <span className="">
+                   
+                    ClassTeacher - {standard.classTeacherId ? 
+                    <span className="text-blue-500 font-semibold">
+
+                   { teachers.find((teacher: any) => teacher.id === standard.classTeacherId)?.name}
+                    </span>
+                    : 
+                    
+                    <span className="text-red-500 font-semibold">
+                    Not Assigned
+                    </span>
+                    
+                    }
+                    </span>
+                  </Typography>
+                </Box>
+    
 
                 <Box mt={2}>
                   {standard.subjects.map((subject: any) => (
                     <Box key={subject.name} display="flex" justifyContent="space-between" alignItems="center" mb={1}>
                       <Typography>
-                        {subject.name} - by {" "}
-                        {subject.teacherIds?.map((id: string) => (
-                          <span key={id} className="text-black font-semibold">
+                        {subject.name} - {" "}
+                        {subject.teacherIds?.length != 0 ? subject.teacherIds?.map((id: string) => (
+                          <span key={id} className="text-blue-500 font-semibold">
                             {teachers.find((teacher: any) => teacher.id === id)?.name},{" "}
                           </span>
-                        ))}
+                        )) : <span className="text-red-500 font-semibold">Not Assigned</span>}
                       </Typography>
                       <IconButton size="small" onClick={() => handleDeleteSubject(standard.id, subject.name)}>
                         <Delete  color="error" />
