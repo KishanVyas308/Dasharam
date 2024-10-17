@@ -17,11 +17,13 @@ const StyledContainer = styled(Container)({
 const AddTeacher = () => {
   const [name, setName] = useState("");
   const [mobileNo, setMobileNo] = useState("");
+  const [grNo, setGrNo] = useState("")
+  const [password, setpassword] = useState("")
   const [teachers, setTeachers] = useRecoilState(teachersAtom);
 
   const handleAddTeacher = async () => {
-    if (name && mobileNo) {
-      await addTeacher(name, mobileNo);
+    if (name && mobileNo && grNo && password) {
+      await addTeacher(name, mobileNo, grNo, password); // Add teacher to the database
       const updatedTeachers = await getAllTeachers(); // Fetch updated teachers list
       setTeachers(updatedTeachers);
       setName("");
@@ -49,13 +51,30 @@ const AddTeacher = () => {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+          <TextField
+            fullWidth
+            label="Teacher Mobile No."
+            variant="outlined"
+            margin="normal"
+            value={mobileNo}
+            onChange={(e) => setMobileNo(e.target.value)}
+          />
         <TextField
           fullWidth
-          label="Teacher Mobile No."
+          label="Gr No"
           variant="outlined"
           margin="normal"
-          value={mobileNo}
-          onChange={(e) => setMobileNo(e.target.value)}
+          value={grNo}
+          onChange={(e) => setGrNo(e.target.value)}
+        />
+        <TextField
+          fullWidth
+          label="Password"
+          type="password"
+          variant="outlined"
+          margin="normal"
+          value={password}
+          onChange={(e) => setpassword(e.target.value)}
         />
         <Button
           fullWidth
