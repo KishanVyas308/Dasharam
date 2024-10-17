@@ -24,7 +24,8 @@ export async function addStudent(name: string, parentName: string, parentMobileN
         parentMobileNo: parentMobileNo,
         grno: grno,
         password: password,
-        standardId: standardId
+        standardId: standardId,
+        role: "student"
         }
         try {
             const studentRef = await addDoc(collection(db, "students"), student);
