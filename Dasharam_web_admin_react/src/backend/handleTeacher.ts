@@ -4,9 +4,9 @@ import { toast } from "react-toastify";
 
 
 // Add a new teacher
-export async function addTeacher(name: string, mobileNo: string) {
+export async function addTeacher(name: string, mobileNo: string, grNo: string, password: string) {
   try {
-    await addDoc(collection(db, "teachers"), { name, mobileNo});
+    await addDoc(collection(db, "teachers"), { name, mobileNo, grNo, password, role: "teacher" });
     toast.success("Teacher added successfully");
   } catch (error) {
     toast.error("Error adding teacher");
