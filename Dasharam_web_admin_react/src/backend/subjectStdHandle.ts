@@ -33,7 +33,8 @@ export async function addStandard(name: string) {
     await addDoc(collection(db, "subjectStd"), {
       standard: name,
       subjects: [],
-      students  : [],
+      students: [],
+      classTeacherId: "",
     });
     toast.success("Standard added successfully");
     return true;
@@ -182,9 +183,11 @@ export async function addTeacherIdsFromStdSub(
   }
 }
 
-
 // TODO : addStudentIdToStdSub in students array
-export async function addStudentIdToStdSub(standardId: string, studentId: string) {
+export async function addStudentIdToStdSub(
+  standardId: string,
+  studentId: string
+) {
   try {
     const standardRef = doc(db, "subjectStd", standardId);
     const docSnap = await getDoc(standardRef);
@@ -209,28 +212,33 @@ export async function addStudentIdToStdSub(standardId: string, studentId: string
 }
 
 //TODO : delete student from subjectStd
-export async function deleteStudentFromStdSub(standardId: string, subjectName: string, studentId: string) {
-    try {
-      const standardRef = doc(db, "subjectStd", standardId);
-      const docSnap = await getDoc(standardRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        const updatedSubjects = data.subjects.filter(
-          (subject: any) => subject.name !== subjectName
-        );
-        await updateDoc(standardRef, { subjects: updatedSubjects });
-        console.log("Subject removed successfully");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Error removing subject");
-    } 
+export async function deleteStudentFromStdSub(
+  standardId: string,
+  subjectName: string,
+  studentId: string
+) {
+  try {
+    const standardRef = doc(db, "subjectStd", standardId);
+    const docSnap = await getDoc(standardRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const updatedSubjects = data.subjects.filter(
+        (subject: any) => subject.name !== subjectName
+      );
+      await updateDoc(standardRef, { subjects: updatedSubjects });
+      console.log("Subject removed successfully");
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Error removing subject");
+  }
 }
 
-
-
 //TODO : delete id from students array
-export async function deleteStudentIdFromStdSub(standardId: string, studentId: string) {
+export async function deleteStudentIdFromStdSub(
+  standardId: string,
+  studentId: string
+) {
   try {
     const standardRef = doc(db, "subjectStd", standardId);
     const docSnap = await getDoc(standardRef);
@@ -247,9 +255,37 @@ export async function deleteStudentIdFromStdSub(standardId: string, studentId: s
 
       console.log("Student ID removed successfully");
     }
-   
   } catch (error) {
     toast.error("Error removing student ID");
     console.error("Error removing student ID:", error);
+  }
+}
+
+//TODO : add class teacher to standard
+export async function addClassTeacherToStandard(
+  standardId: string,
+  teacherId: string
+) {
+  try {
+    const standardRef = doc(db, "subjectStd", standardId);
+    await updateDoc(standardRef, { classTeacherId: teacherId });
+    console.log("Class teacher added successfully");
+    toast.success("Class teacher added successfully");
+  } catch (error) {
+    console.error("Error adding ClassTeacher:", error);
+    toast.success("Error adding ClassTeacher");
+  }
+}
+
+//TODO : delete teacher id from std
+export async function deleteTeacherIdFromStdSub(standardId: string) {
+  try {
+    const standardRef = doc(db, "subjectStd", standardId);
+    await updateDoc(standardRef, { teacherId: "" });
+    console.log("Class teacher added successfully");
+    toast.success("Class teacher removed successfully");
+  } catch (error) {
+    console.error("Error adding ClassTeacher:", error);
+    toast.success("Error to Removing ClassTeacher");
   }
 }
