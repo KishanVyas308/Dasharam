@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ManageTeacherPage from "./pages/Teacher/ManageTeacherPage";
 import ManageStudentPage from "./pages/Student/ManageStudentPage";
 import TestPage from "./pages/Test/TestPage";
+import AttedancePage from "./pages/Attedance/AttedancePage";
 
 function App() {
   return (
@@ -34,6 +35,10 @@ function App() {
           <Route
             path="/manage-test"
             element={<AdminAuthMiddleware children={<TestPage />} />}
+          />
+          <Route
+            path="/add-attedance"
+            element={<AdminAuthMiddleware children={<AttedancePage />} />}
           />
         </Routes>
       </Router>

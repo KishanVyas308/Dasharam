@@ -27,6 +27,9 @@ const HomePage = () => {
                               <Link to="/manage-test" className='bg-white shadow-md rounded-lg p-6 text-center hover:bg-purple-50 transition'>
                                     <h3 className='text-xl font-bold text-purple-600'>Manage Test</h3>
                               </Link>
+                              <Link to="/add-attedance" className='bg-white shadow-md rounded-lg p-6 text-center hover:bg-purple-50 transition'>
+                                    <h3 className='text-xl font-bold text-purple-600'>Add Attedance</h3>
+                              </Link>
                         </div>
                   </main>
 
