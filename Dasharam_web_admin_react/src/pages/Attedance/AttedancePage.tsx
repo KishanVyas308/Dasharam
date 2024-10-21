@@ -1,21 +1,35 @@
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { teastsAtom } from "../../state/testsAtom";
-import { getAllTests } from "../../backend/handleTest";
+import { getAllTeachers } from "../../backend/handleTeacher";
+import { getAllStdSub } from "../../backend/subjectStdHandle";
 import AddAttedance from "./AddAttedance";
-
+import { teachersAtom } from "../../state/teachersAtom";
+import { stdSubAtom } from "../../state/stdSubAtom";
+import { studentsAtom } from "../../state/studentsAtom";
 
 const AttedancePage = () => {
-  const [tests, setTests] = useRecoilState(teastsAtom);
+  const [teachers, setTeachers] = useRecoilState(teachersAtom);
+  const [stdSubjects, setStdSubjects] = useRecoilState(stdSubAtom);
+  const [students, setStudents] = useRecoilState(studentsAtom);
 
   useEffect(() => {
-    async function fatchTest() {
-      if (tests.length === 0) {
-        const result = await getAllTests();
-        setTests(result);
-      }
+    if (teachers.length === 0) {
+      getAllTeachers().then((data) => {
+        setTeachers(data);
+      });
     }
-    fatchTest();
+    if (stdSubjects.length === 0) {
+      getAllStdSub().then((data) => {
+        setStdSubjects(data);
+      });
+    }
+    if (students.length === 0) {
+      getAllStdSub().then((data) => {
+        if (data)
+          setStudents(data);
+        else setStudents([]);
+      });
+    }
   }, []);
   return <div className="">
     <AddAttedance />
