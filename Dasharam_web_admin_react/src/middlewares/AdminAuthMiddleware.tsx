@@ -1,22 +1,45 @@
 import React, { useEffect } from "react";
-import { currentAdminState } from "../state/currentAdminAtom";
+import { userAtom } from "../state/userAtom";
 import { useRecoilState } from "recoil";
 import { Navigate, useNavigate } from "react-router-dom";
-import Login from "../pages/auth/Login";
+import Cookies from "js-cookie";
+import { UserRole } from "../types/type";
 
-const AdminAuthMiddleware = ({ children }: { children: React.ReactNode }) => {
+const AdminAuthMiddleware = ({
+  children,
+  allowAccessToTeacher,
+}: {
+  children: React.ReactNode;
+  allowAccessToTeacher: boolean;
+}) => {
   const navigate = useNavigate();
-  const [currentAdmin, setCurrentAdmin] = useRecoilState(currentAdminState);
+  const [user, setUser] = useRecoilState(userAtom);
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
+    const user: any = Cookies.get("user");
     if (user) {
-      setCurrentAdmin(JSON.parse(user));
-      navigate("/");
+      setUser(JSON.parse(user));
+      if (user.roll == UserRole.Admin) navigate("/");
     }
   }, []);
 
-  return <>{currentAdmin ? children :  <Navigate to="/login" />}</>;
+  function checkuserIsAdmin() {
+    if (user?.role == UserRole.Admin) {
+      return children;
+    } else if (user?.role == UserRole.Teacher && allowAccessToTeacher) {
+      return children;
+    } 
+    else if(user?.role == UserRole.Teacher && !allowAccessToTeacher){
+      alert("You are not allowed to access this page");
+      return <Navigate to="/" />;
+    }
+    else {
+      alert("Login First");
+      return <Navigate to="/login" />;
+    }
+  }
+
+  return <>{checkuserIsAdmin()}</>;
 };
 
 export default AdminAuthMiddleware;
