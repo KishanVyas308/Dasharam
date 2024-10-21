@@ -3,14 +3,14 @@ import Cookies from 'js-cookie';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { currentAdminState } from '../../state/currentAdminAtom';
+import { userAtom } from '../../state/userAtom';
 import { login } from '../../backend/auth';
 
 const Login = () => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const [currentAdmin, setCurrentAdmin] = useRecoilState<any>(currentAdminState);
+  const [currentAdmin, setCurrentAdmin] = useRecoilState<any>(userAtom);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
