@@ -24,7 +24,7 @@ export const login = async (name: string, password: string) => {
       const teacherData = teacherDoc.data();
       
       if (teacherData.password === password) {
-        return teacherData;
+      return { ...teacherData, id: teacherDoc.id };
       }
     }
   } catch (error) {
