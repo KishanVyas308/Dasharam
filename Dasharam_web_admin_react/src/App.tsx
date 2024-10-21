@@ -18,27 +18,31 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route
             path="/"
-            element={<AdminAuthMiddleware children={<HomePage />} />}
+            element={<AdminAuthMiddleware children={<HomePage />} allowAccessToTeacher={true} />}
           />
+          
+
+          
           <Route
             path="/subject-std"
-            element={<AdminAuthMiddleware children={<SubjectStdPage />} />}
+            element={<AdminAuthMiddleware children={<SubjectStdPage />} allowAccessToTeacher={false}/>}
           />
           <Route
             path="/manage-teacher"
-            element={<AdminAuthMiddleware children={<ManageTeacherPage />} />}
+            element={<AdminAuthMiddleware children={<ManageTeacherPage />} allowAccessToTeacher={false} />}
           />
           <Route
             path="/manage-student"
-            element={<AdminAuthMiddleware children={<ManageStudentPage />} />}
+            element={<AdminAuthMiddleware children={<ManageStudentPage />} allowAccessToTeacher={false} />}
           />
+        
           <Route
             path="/manage-test"
-            element={<AdminAuthMiddleware children={<TestPage />} />}
+            element={<AdminAuthMiddleware children={<TestPage />} allowAccessToTeacher={true} />}
           />
           <Route
             path="/add-attedance"
-            element={<AdminAuthMiddleware children={<AttedancePage />} />}
+            element={<AdminAuthMiddleware children={<AttedancePage />} allowAccessToTeacher={true} />}
           />
         </Routes>
       </Router>
