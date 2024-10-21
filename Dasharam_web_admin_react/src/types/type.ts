@@ -26,10 +26,15 @@ export interface Test {
   collectedMarks: number;
 }
 
+export enum UserRole {
+  Admin = "admin",
+  Teacher = "teacher",
+}
 
-export interface Admin {
+export interface User {
   id: string;
   email: string;
   password: string;
   name: string;
+  role: UserRole;
 }
