@@ -103,6 +103,5 @@ export async function updateAttendance(
   } catch (error) {
     toast.error("Error updating attendance");
     console.log(error);
-    
   }
 }
