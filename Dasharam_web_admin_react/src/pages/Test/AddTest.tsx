@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { teastsAtom } from "../../state/testsAtom";
 import { teachersAtom } from "../../state/teachersAtom";
@@ -17,12 +17,15 @@ import {
   Paper,
   Box,
 } from "@mui/material";
+import { userAtom } from "../../state/userAtom";
+import { UserRole } from "../../types/type";
 
 const AddTest = () => {
   const [tests, setTests] = useRecoilState(teastsAtom);
   const teachers = useRecoilValue(teachersAtom);
   const students = useRecoilValue(studentsAtom);
   const stdSub = useRecoilValue(stdSubAtom);
+  const user = useRecoilValue(userAtom);
 
   const [name, setName] = useState<string>("");
   const [standardId, setStandardId] = useState<string>("");
@@ -31,6 +34,26 @@ const AddTest = () => {
   const [totalMarks, setTotalMarks] = useState<string>("0");
   const [takenDate, setTakenDate] = useState<Date | null>(null);
   const [selectedStdStudents, setSelectedStdStudents] = useState<any>([]);
+
+  useEffect(() => {
+    if (!takenDate) {
+      const today = new Date();
+      setTakenDate(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+    }
+    if(user?.role === UserRole.Teacher && teachers.length > 0 && stdSub.length > 0) {
+      const stdid = stdSub.find((s: any) => s.classTeacherId === user.id);
+      setStandardId(stdid.id);
+      setTakenByTeacherId(user.id);
+      const selectedStudents = students
+      .filter((student: any) => student.standardId === stdid.id)
+      .map((student: any) => ({
+        studentId: student.id,
+        marks: "0",
+      }));
+
+    setSelectedStdStudents(selectedStudents);
+    }
+  }, []);
 
   const filteredStudents = useMemo(() => {
     return students.filter((student: any) => student.standardId === standardId);
@@ -81,6 +104,7 @@ const AddTest = () => {
               value={standardId || ""}
               onChange={handleStdChange}
               fullWidth
+              disabled={!user || user.role === "teacher"}
             >
               <MenuItem value="">
                 <em>Select Standard</em>
@@ -99,6 +123,7 @@ const AddTest = () => {
               value={subject || ""}
               onChange={(e) => setSubject(e.target.value)}
               fullWidth
+             
             >
               <MenuItem value="">
                 <em>Select Subject</em>
@@ -106,7 +131,7 @@ const AddTest = () => {
               {stdSub
                 .find((std: any) => std.id === standardId)
                 ?.subjects.map((sub: any) => (
-                  <MenuItem key={sub.id} value={sub.name}>
+                  <MenuItem key={sub.name} value={sub.name}>
                     {sub.name}
                   </MenuItem>
                 ))}
@@ -119,6 +144,7 @@ const AddTest = () => {
               value={takenByTeacherId || ""}
               onChange={(e) => setTakenByTeacherId(e.target.value)}
               fullWidth
+              disabled={!user || user.role === "teacher"}
             >
               <MenuItem value="">
                 <em>Select Teacher</em>

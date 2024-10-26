@@ -28,7 +28,7 @@ const StandardTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const ManageStudent = () => {
-  const [students, setStudents] = useRecoilState(studentsAtom);
+  const [students, setStudents] = useRecoilState<any>(studentsAtom);
   const [subjects, setSubjects] = useRecoilState(stdSubAtom);
 
   async function fetchStudents() {

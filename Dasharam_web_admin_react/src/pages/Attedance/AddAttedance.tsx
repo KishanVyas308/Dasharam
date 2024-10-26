@@ -43,12 +43,13 @@ const AddAttendance = () => {
       setTakenDate(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
     }
     if (teachers.length > 0 && user?.role === UserRole.Teacher && stdSub.length > 0) {
-
+      console.log(stdSub);
+      
       const stdid = stdSub.find((s: any) => s.classTeacherId === user.id);
       console.log(stdid);
 
       setStandardId(stdid.id);
-      console.log(user.id);
+      console.log(user);
       console.log(teachers);
       setTakenByTeacherId(user.id);
     }
@@ -123,6 +124,7 @@ const AddAttendance = () => {
             <TextField
               select
               label="Select Teacher"
+              disabled={user?.role === UserRole.Teacher}
               value={takenByTeacherId || ""}
               onChange={(e) => setTakenByTeacherId(e.target.value)}
               fullWidth

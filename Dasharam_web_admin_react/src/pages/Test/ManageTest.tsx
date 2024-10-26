@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { teastsAtom } from '../../state/testsAtom';
 import { stdSubAtom } from '../../state/stdSubAtom';
@@ -22,15 +22,26 @@ import {
   Button,
   Box,
 } from '@mui/material';
+import { userAtom } from '../../state/userAtom';
+import { UserRole } from '../../types/type';
 
 const ManageTest = () => {
   const tests = useRecoilValue(teastsAtom);
   const stdSub = useRecoilValue(stdSubAtom);
   const students = useRecoilValue(studentsAtom);
-  
-  const [selectedStd, setSelectedStd] = useState<string>('');  
+  const user = useRecoilValue(userAtom);
+
+  const [selectedStd, setSelectedStd] = useState<string>('');
   const [selectedTest, setSelectedTest] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (user?.role === UserRole.Teacher && stdSub.length > 0) {
+      const stdid = stdSub.find((s: any) => s.classTeacherId === user.id);
+      setSelectedStd(stdid.id);
+    }
+  }, []);
+
 
   const handleStdChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedStd(event.target.value as string);
@@ -57,28 +68,28 @@ const ManageTest = () => {
             </Typography>
             <FormControl fullWidth>
               <InputLabel id="standard-select-label">Select Standard</InputLabel>
-                <Select
+              <Select
                 labelId="standard-select-label"
                 value={selectedStd}
                 label="Select Standard"
                 onChange={(event) => handleStdChange(event as React.ChangeEvent<{ value: unknown }>)}
-                >
+              >
                 <MenuItem value="">
                   <em>All Standards</em>
                 </MenuItem>
                 {stdSub.map((std: any) => (
                   <MenuItem key={std.id} value={std.id}>
-                  {std.standard}
+                    {std.standard}
                   </MenuItem>
                 ))}
-                </Select>
+              </Select>
             </FormControl>
           </Paper>
         </Grid>
 
         {/* Main Content */}
         <Grid item xs={12} md={9}>
-          <Paper elevation={3} sx={{ p: 3 , mb:4}}>
+          <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
             <Typography variant="h6" gutterBottom>
               Tests
             </Typography>
@@ -87,8 +98,8 @@ const ManageTest = () => {
                 {tests
                   .filter((t: any) => t.standardId === selectedStd)
                   .map((t: any) => (
-                    <ListItem 
-                      key={t.id} 
+                    <ListItem
+                      key={t.id}
                       onClick={() => openModal(t)}
                       sx={{
                         mb: 1,
@@ -135,7 +146,7 @@ const ManageTest = () => {
               <Typography variant="subtitle1" gutterBottom>
                 Total Marks: {selectedTest.totalMarks}
               </Typography>
-              <Box sx={{ mt: 2}}>
+              <Box sx={{ mt: 2 }}>
                 <Typography variant="h6">Students</Typography>
                 <List>
                   {selectedTest.students.map((student: any) => {

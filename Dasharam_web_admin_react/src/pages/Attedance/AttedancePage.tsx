@@ -6,6 +6,7 @@ import AddAttedance from "./AddAttedance";
 import { teachersAtom } from "../../state/teachersAtom";
 import { stdSubAtom } from "../../state/stdSubAtom";
 import { studentsAtom } from "../../state/studentsAtom";
+import { getAllStudents } from "../../backend/handleStudent";
 
 const AttedancePage = () => {
   const [teachers, setTeachers] = useRecoilState(teachersAtom);
@@ -24,7 +25,7 @@ const AttedancePage = () => {
       });
     }
     if (students.length === 0) {
-      getAllStdSub().then((data) => {
+      getAllStudents().then((data) => {
         if (data)
           setStudents(data);
         else setStudents([]);
