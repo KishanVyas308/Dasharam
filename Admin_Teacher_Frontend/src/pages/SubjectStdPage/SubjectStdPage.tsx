@@ -1,37 +1,25 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { motion, AnimatePresence } from 'framer-motion'
 import { stdSubAtom } from '../../state/stdSubAtom'
 import { teachersAtom } from '../../state/teachersAtom'
 import { userAtom } from "../../state/userAtom"
-import {
-  addStandard,
-  addSubjectsInStandard,
-  deleteStandard,
-  getAllStdSub,
-  removeSubjectFromStandard,
-  updateStandardName,
-} from '../../backend/subjectStdHandle'
-import { getAllTeachers } from '../../backend/handleTeacher'
-import { FaPlus, FaTrash, FaPencilAlt, FaSave, FaTimes, FaGraduationCap, FaChalkboardTeacher, FaBars, FaUserCircle, FaSignOutAlt } from 'react-icons/fa'
-import { Link } from "react-router-dom"
+import { FaPlus, FaTrash, FaPencilAlt, FaSave, FaTimes, FaGraduationCap, FaChalkboardTeacher, FaBars, FaSignOutAlt } from 'react-icons/fa'
 import Cookies from "js-cookie"
 import Sidebar from '../Dashbord/Sidebar'
-
-const menuItems = [
-  { title: "Manage Subjects", icon: FaChalkboardTeacher, link: "/subject-std" },
-  { title: "Manage Teachers", icon: FaChalkboardTeacher, link: "/manage-teacher" },
-  { title: "Manage Students", icon: FaUserCircle, link: "/manage-student" },
-  { title: "Manage Tests", icon: FaGraduationCap, link: "/manage-test" },
-  { title: "Attendance", icon: FaUserCircle, link: "/add-attedance" },
-]
+import axios from 'axios'
+import { BACKEND_URL } from '../../config'
+import { toast } from 'react-toastify'
+import Loading from '../../components/Loading'
+import ConformDeletePopUp from '../../components/conformation/ConformDeletePopUp'
 
 export default function SubjectStandardPage() {
   const [stdSubState, setStdSubState] = useRecoilState<any>(stdSubAtom)
   const [teachers, setTeachers] = useRecoilState(teachersAtom)
   const [user, setUser] = useRecoilState(userAtom)
+  const [isLoading , setIsLoading] = useState(false)
 
   const [addStdText, setAddStdText] = useState('')
   const [addSubjTexts, setAddSubjTexts] = useState<any>({})
@@ -41,57 +29,145 @@ export default function SubjectStandardPage() {
   const [editStdId, setEditStdId] = useState('')
 
   const [isSidebarOpen, setSidebarOpen] = useState(false)
+  const [isConformDelete, setIsConformDelete] = useState(false)
+  const [deleteData, setDeleteData] = useState<any>({})
 
   useEffect(() => {
     setUp()
   }, [])
 
   async function setUp() {
-    const allStdSub = await getAllStdSub()
-    if (allStdSub) {
-      setStdSubState(allStdSub)
+    // const allStdSub = await getAllStdSub()
+    setIsLoading(true)
+    try {
+      // returns all standards and subjects
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      if (res.data) {
+        console.log(res.data);
+        
+      setStdSubState(res.data)
+      }
+    } catch (error: any) {
+      toast.error(error.response.data.message)
+      setIsLoading(false)
+      return
     }
-    const allTeachers = await getAllTeachers()
-    if (allTeachers) {
-      setTeachers(allTeachers)
+
+    try {
+      // returns all teachers
+      const res = await axios.get(`${BACKEND_URL}/teacher/all`)
+      if (res.data) {
+      setTeachers(res.data)
+      console.log(res.data);
+      }
+    } catch (error: any) {
+      toast.error(error.response.data.message)
+      setIsLoading(false)
+      return
     }
+    setIsLoading(false)
   }
 
   async function handleAddStandard() {
     if (addStdText.trim()) {
-      const success = await addStandard(addStdText)
-      if (success) {
-        setAddStdText('')
-        setUp()
+      // add a new standard
+      setIsLoading(true)
+      try {
+        const res = await axios.post(`${BACKEND_URL}/subject-standard/add`, { name: addStdText.trim() })
+        // const success = await addStandard(addStdText)
+        if(res.status === 200){
+          toast.success(res.data.message)
+          setAddStdText('')
+          setUp()
+        }
+      } catch (error: any) {
+        toast.error(error.response.data.message)
+        setIsLoading(false)
+      }
+    }
+  }
+  async function handleUpdateStandardName(standardId: string) {
+    if (editStdName.trim()) {
+      setIsLoading(true)
+      try {
+        const res = await axios.put(`${BACKEND_URL}/subject-standard/update-name/${standardId}`, { newName: editStdName.trim() })
+        if (res.status === 200) {
+          toast.success(res.data.message)
+          setEditStdName('')
+          setIsEditStdName(false)
+          setUp()
+        }
+      } catch (error: any) {
+        toast.error(error.response.data.message)
+        setIsLoading(false)
       }
     }
   }
 
-  async function handleUpdateStandardName(standardId: string) {
-    if (editStdName.trim()) {
-      await updateStandardName(standardId, editStdName)
-      setIsEditStdName(false)
-      setUp()
-    }
-  }
-
   async function handleDeleteStandard(standardId: string) {
-    await deleteStandard(standardId)
-    setUp()
+    setIsLoading(true)
+    try {
+      const res = await axios.delete(`${BACKEND_URL}/subject-standard/delete/${standardId}`)
+      if (res.status === 200) {
+        toast.success(res.data.message)
+        setUp()
+      }
+    } catch (error: any) {
+      toast.error(error.response.data.message)
+      setIsLoading(false)
+    }
   }
 
   async function handleAddStandardSubjects(standardId: string) {
     if (addSubjTexts[standardId]?.trim()) {
       const newSubjects = addSubjTexts[standardId].split(',').map((name: string) => ({ name: name.trim() }))
-      await addSubjectsInStandard(standardId, newSubjects)
-      setAddSubjTexts((prev: any) => ({ ...prev, [standardId]: '' }))
-      setUp()
+      setIsLoading(true)
+      try {
+        const res = await axios.post(`${BACKEND_URL}/subject-standard/add-subjects`, {standardId :  standardId , newSubjects: newSubjects })
+        if (res.status === 200) {
+          toast.success(res.data.message)
+          setAddSubjTexts((prev: any) => ({ ...prev, [standardId]: '' }))
+          setUp()
+        }
+      } catch (error: any) {
+        toast.error(error.response.data.message)
+        setIsLoading(false)
+      }
     }
   }
 
   async function handleDeleteSubject(standardId: string, subjectName: string) {
-    await removeSubjectFromStandard(standardId, subjectName)
-    setUp()
+    setIsLoading(true)
+    try {
+      const res = await axios.put(`${BACKEND_URL}/subject-standard/remove-subject`, {
+       standardId: standardId, subjectName : subjectName 
+      })
+      if (res.status === 200) {
+        toast.success(res.data.message)
+        setUp()
+      }
+    } catch (error: any) {
+      toast.error(error.response.data.message)
+      setIsLoading(false)
+    }
+  }
+
+  async function handleDeleteTeacherFromSubject(standardId: string, subjectName: string, teacherId: string) {
+    setIsLoading(true)
+    try {
+      const res = await axios.put(`${BACKEND_URL}/subject-standard/std/sub/remove-teacher`, {
+        standardId: standardId, subjectName: subjectName, teacherId: teacherId
+      })
+      if (res.status === 200) {
+        setIsConformDelete(false)
+        toast.success(res.data.message)
+        setUp()
+      }
+    } catch (error: any) {
+      toast.error(error.response.data.message)
+      setIsConformDelete(false)
+      setIsLoading(false)
+    }
   }
 
   const handleLogout = () => {
@@ -107,6 +183,13 @@ export default function SubjectStandardPage() {
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
       {/* Sidebar */}
+      {
+        isLoading && <Loading/>
+      }
+      {
+        isConformDelete && <ConformDeletePopUp show={isConformDelete} handleClose={() => setIsConformDelete(false)} handleConfirm={() => handleDeleteTeacherFromSubject(deleteData.standardId, deleteData.subjectName, deleteData.teacherId)} />
+      }
+      
      <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>
 
       {/* Main Content */}
@@ -172,7 +255,7 @@ export default function SubjectStandardPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <AnimatePresence>
-                {stdSubState.map((standard: any) => (
+                {stdSubState && stdSubState.map((standard: any) => (
                   <motion.div
                     key={standard.id}
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -264,16 +347,23 @@ export default function SubjectStandardPage() {
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: 20 }}
-                          className="flex justify-between items-center bg-gray-100 p-2 rounded-md"
+                          className="flex justify-between items-center bg-gray-100 p-2 rounded-md bg-opacity-50"
                         >
                           <div>
                             <FaChalkboardTeacher className="inline-block mr-2 text-gray-600" />
                             <span className="font-medium">{subject.name}</span> -{' '}
                             {subject.teacherIds?.length ? (
                               subject.teacherIds.map((id: string) => (
-                                <span key={id} className="text-indigo-500 font-semibold">
-                                  {teachers.find((teacher: any) => teacher.id === id)?.name},{' '}
-                                </span>
+                                <div key={id} className="inline-block" onClick={() => {
+                                  setIsConformDelete(true)
+                                  setDeleteData({ standardId: standard.id, subjectName: subject.name, teacherId: id })
+                                }}>
+                                  <span className="text-indigo-500 font-semibold hover:text-red-500 cursor-pointer transition-colors duration-100">
+                                  {teachers.find((teacher: any) => teacher.id === id)?.name}
+                                  </span>
+                                  
+                                  {', '}
+                                </div>
                               ))
                             ) : (
                               <span className="text-red-500 font-semibold">Not Assigned</span>

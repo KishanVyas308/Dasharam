@@ -7,12 +7,12 @@ import {
     updateStandardNameEndpoint,
     removeSubjectFromStandardEndpoint,
     deleteStandardEndpoint,
-    addTeacherIdsFromStdSubEndpoint,
+    assignSubjectTeacherEndpoint,
     addStudentIdToStdSubEndpoint,
-    deleteStudentFromStdSubEndpoint,
     deleteStudentIdFromStdSubEndpoint,
-    addClassTeacherToStandardEndpoint,
-    deleteTeacherIdFromStdSubEndpoint
+    assignClassTeacherEndpoint,
+    deleteTeacherIdFromStdSubEndpoint,
+    deleteTeacherFromSubjectInStandardEndpoint
 } from '../controllers/handleSubjectStandardController';
 
 const router = Router();
@@ -39,21 +39,22 @@ router.put('/remove-subject', removeSubjectFromStandardEndpoint);
 router.delete('/delete/:standardId', deleteStandardEndpoint);
 
 // Endpoint to add teacher IDs to a subject in a standard
-router.post('/add-teacher-ids', addTeacherIdsFromStdSubEndpoint);
-
-// Endpoint to add student ID to a standard
-router.post('/add-student-id', addStudentIdToStdSubEndpoint);
-
-// Endpoint to delete a student from a subject in a standard
-router.put('/delete-student', deleteStudentFromStdSubEndpoint);
-
-// Endpoint to delete student ID from a standard
-router.put('/delete-student-id', deleteStudentIdFromStdSubEndpoint);
+router.post('/assign-subject-teacher', assignSubjectTeacherEndpoint);
 
 // Endpoint to add class teacher to a standard
-router.post('/add-class-teacher', addClassTeacherToStandardEndpoint);
+router.post('/assign-class-teacher', assignClassTeacherEndpoint);
+
+// Endpoint to add student ID to a standard
+router.post('/std/add-student-id', addStudentIdToStdSubEndpoint);
+
+// Endpoint to delete student ID from a standard
+router.put('/std/delete-student', deleteStudentIdFromStdSubEndpoint);
+
 
 // Endpoint to delete class teacher from a standard
 router.delete('/delete-class-teacher/:standardId', deleteTeacherIdFromStdSubEndpoint);
+
+// Endpoint to delete teacher ID from a subject in a standard
+router.put('/std/sub/remove-teacher', deleteTeacherFromSubjectInStandardEndpoint);
 
 export default router;

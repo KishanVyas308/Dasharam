@@ -1,28 +1,70 @@
 'use client'
 
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useRecoilState } from "recoil"
 import { studentsAtom } from "../../state/studentsAtom"
 import { stdSubAtom } from "../../state/stdSubAtom"
-import { deleteStudent, getAllStudents } from "../../backend/handleStudent"
-import { getAllStdSub } from "../../backend/subjectStdHandle"
+// import { deleteStudent, getAllStudents } from "../../backend/handleStudent"
+// import { getAllStdSub } from "../../backend/standardstdHandle"
 import { motion } from 'framer-motion'
 import { FaTrash, FaGraduationCap, FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import axios from "axios"
+import { BACKEND_URL } from "../../config"
+import { toast } from "react-toastify"
+import Loading from "../../components/Loading"
 
 export default function ManageStudent() {
   const [students, setStudents] = useRecoilState<any>(studentsAtom)
-  const [subjects, setSubjects] = useRecoilState(stdSubAtom)
+  const [standards, setStandards] = useRecoilState(stdSubAtom)
   const [expandedStandard, setExpandedStandard] = useState<string | null>(null)
+
+  const [isLoading, setIsLoading] = useState(false)
 
   async function fetchStudents() {
     if (students.length === 0) {
+      setIsLoading(true)
       const data = await getAllStudents()
+      setIsLoading(false)
       setStudents(data)
     }
-    if (subjects.length === 0) {
+    if (standards.length === 0) {
+      setIsLoading(true)
       const data = await getAllStdSub()
-      setSubjects(data)
+      setIsLoading(false)
+      setStandards(data)
     }
+  }
+
+  const getAllStdSub = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      if (res.status === 200) {
+      
+        return res.data
+      }
+    } catch (error: any) {
+      
+      toast.error("Failed to fetch updated standards list")
+      return []
+    }
+   
+  }
+
+  const getAllStudents= async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/student/all`)
+      console.log("students", res.data);  
+      
+      if (res.status === 200) {
+     
+        return res.data
+      }
+    } catch (error: any) {
+      
+      toast.error("Failed to fetch updated standards list")
+      return []
+    }
+   
   }
 
   useEffect(() => {
@@ -30,11 +72,25 @@ export default function ManageStudent() {
   }, [])
 
   const handleDeleteStudent = async (studentId: string, subjectId: string) => {
-    await deleteStudent(studentId, subjectId)
+    setIsLoading(true)
+    try {
+      const res = await axios.delete(`${BACKEND_URL}/student/delete`, {
+        data: {
+          studentId,
+          standardId : subjectId
+        }
+      })
+      toast.success(res.data.message)
+    } catch (error: any) {
+      
+      toast.error("Failed to delete student")
+      
+    }
     const updatedStudents = await getAllStudents()
     setStudents(updatedStudents)
-    const updatedSubjects = await getAllStdSub()
-    setSubjects(updatedSubjects)
+    const updatedstandards = await getAllStdSub()
+    setStandards(updatedstandards)
+    setIsLoading(false)
   }
 
   const toggleExpandStandard = (standardId: string) => {
@@ -47,11 +103,14 @@ export default function ManageStudent() {
       animate={{ opacity: 1, y: 0 }}
       className="bg-white p-6 shadow-md"
     >
+      {
+        isLoading && <Loading />
+      }
       <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
         <FaGraduationCap className="mr-2" />
         Manage Students
       </h2>
-      {subjects.map((subject: any) => (
+      {standards.map((subject: any) => (
         <div key={subject.id} className="mb-6">
           {/* Header with Standard */}
           <div
@@ -93,11 +152,14 @@ export default function ManageStudent() {
                       <tr key={id} className="border-b hover:bg-gray-50">
                         <td className="p-2 border">{index + 1}</td>
                         <td className="p-2 border">{student?.name || "Unknown"}</td>
-                        <td className="p-2 border">{student?.grNo || "N/A"}</td>
+                        <td className="p-2 border">{student?.grno || "N/A"}</td>
                         <td className="p-2 border">{student?.parentMobile || "N/A"}</td>
                         <td className="p-2 border">
                           <button
-                            onClick={() => handleDeleteStudent(id, subject.id)}
+                            onClick={() => {handleDeleteStudent(id, subject.id) 
+                              console.log("delete student", id, subject.id);
+                              
+                            }}
                             className="text-red-500 hover:text-red-700 transition duration-200"
                           >
                             <FaTrash />

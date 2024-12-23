@@ -22,7 +22,6 @@ export async function getAllStdSub() {
         });
         return result;
     } catch (error) {
-        console.log(error);
         return null;
     }
 }
@@ -72,7 +71,6 @@ export async function addSubjectsInStandard(
 
             // Update Firestore document with the combined subjects
             await updateDoc(standardRef, { subjects: updatedSubjectsWithTeacherIds });
-            console.log(updatedSubjectsWithTeacherIds);
 
             return true;
         } else {
@@ -95,7 +93,6 @@ export async function getStandardById(standardId: string) {
             return null;
         }
     } catch (error) {
-        console.log(error);
         return null;
     }
 }
@@ -106,7 +103,6 @@ export async function updateStandardName(standardId: string, newName: string) {
         const standardRef = doc(db, "subjectStd", standardId);
         await updateDoc(standardRef, { standard: newName });
     } catch (error) {
-        console.log(error);
     }
 }
 
@@ -115,6 +111,10 @@ export async function removeSubjectFromStandard(
     standardId: string,
     subjectName: string
 ) {
+    if (!standardId || !subjectName) {
+        return;
+    }
+
     try {
         const standardRef = doc(db, "subjectStd", standardId);
         const docSnap = await getDoc(standardRef);
@@ -126,7 +126,6 @@ export async function removeSubjectFromStandard(
             await updateDoc(standardRef, { subjects: updatedSubjects });
         }
     } catch (error) {
-        console.log(error);
     }
 }
 
@@ -136,12 +135,11 @@ export async function deleteStandard(standardId: string) {
         const standardRef = doc(db, "subjectStd", standardId);
         await deleteDoc(standardRef);
     } catch (error) {
-        console.log(error);
     }
 }
 
 // Add teacher IDs in array
-export async function addTeacherIdsFromStdSub(
+export async function assignSubjectTeacher(
     standardId: string,
     subjectName: string,
     teacherId: string
@@ -163,10 +161,8 @@ export async function addTeacherIdsFromStdSub(
                 return subject;
             });
             await updateDoc(standardRef, { subjects });
-            console.log("Subjects updated successfully");
         }
     } catch (error) {
-        console.log(error);
     }
 }
 
@@ -189,36 +185,14 @@ export async function addStudentIdToStdSub(
             // Update the students array in Firestore
             await updateDoc(standardRef, { students: updatedStudents });
 
-            console.log("Student ID added successfully");
         } else {
-            console.log("Standard not found");
         }
     } catch (error) {
         console.error("Error adding student ID:", error);
     }
 }
 
-// Delete student from subjectStd
-export async function deleteStudentFromStdSub(
-    standardId: string,
-    subjectName: string,
-    studentId: string
-) {
-    try {
-        const standardRef = doc(db, "subjectStd", standardId);
-        const docSnap = await getDoc(standardRef);
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            const updatedSubjects = data.subjects.filter(
-                (subject: any) => subject.name !== subjectName
-            );
-            await updateDoc(standardRef, { subjects: updatedSubjects });
-            console.log("Subject removed successfully");
-        }
-    } catch (error) {
-        console.log(error);
-    }
-}
+
 
 // Delete student ID from students array
 export async function deleteStudentIdFromStdSub(
@@ -226,20 +200,23 @@ export async function deleteStudentIdFromStdSub(
     studentId: string
 ) {
     try {
+ 
+        
         const standardRef = doc(db, "subjectStd", standardId);
         const docSnap = await getDoc(standardRef);
+
         if (docSnap.exists()) {
             const data = docSnap.data();
+            
 
             // If students array exists, append the new studentId, else initialize it
-            const updatedStudents = data.students.filter(
-                (student: any) => student !== studentId
-            );
+            const updatedStudents = data.students && Array.isArray(data.students)
+                ? data.students.filter((student: any) => student !== studentId)
+                : [];
 
             // Update the students array in Firestore
             await updateDoc(standardRef, { students: updatedStudents });
 
-            console.log("Student ID removed successfully");
         }
     } catch (error) {
         console.error("Error removing student ID:", error);
@@ -247,14 +224,13 @@ export async function deleteStudentIdFromStdSub(
 }
 
 // Add class teacher to standard
-export async function addClassTeacherToStandard(
+export async function assignClassTeacher(
     standardId: string,
     teacherId: string
 ) {
     try {
         const standardRef = doc(db, "subjectStd", standardId);
         await updateDoc(standardRef, { classTeacherId: teacherId });
-        console.log("Class teacher added successfully");
     } catch (error) {
         console.error("Error adding ClassTeacher:", error);
     }
@@ -265,13 +241,40 @@ export async function deleteTeacherIdFromStdSub(standardId: string) {
     try {
         const standardRef = doc(db, "subjectStd", standardId);
         await updateDoc(standardRef, { teacherId: "" });
-        console.log("Class teacher removed successfully");
     } catch (error) {
         console.error("Error removing ClassTeacher:", error);
     }
 }
 
-// Express endpoint handlers
+// Delete teacher from subject in standard
+export async function deleteTeacherFromSubjectInStandard(
+    standardId: string,
+    subjectName: string,
+    teacherId: string
+) {
+    try {
+        const standardRef = doc(db, "subjectStd", standardId);
+        const docSnap = await getDoc(standardRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            const subjects = data.subjects.map((subject: any) => {
+                if (subject.name === subjectName) {
+                    const updatedTeacherIds = subject.teacherIds.filter(
+                        (id: string) => id !== teacherId
+                    );
+                    return { ...subject, teacherIds: updatedTeacherIds };
+                }
+                return subject;
+            });
+            await updateDoc(standardRef, { subjects });
+           
+        }
+    } catch (error) {
+    }
+}
+
+
+//? Express endpoint handlers
 export async function getAllStdSubEndpoint(req: Request, res: Response) {
     try {
         const result = await getAllStdSub();
@@ -280,6 +283,8 @@ export async function getAllStdSubEndpoint(req: Request, res: Response) {
         res.status(500).send({ message: 'Error getting all standards with subjects', error });
     }
 }
+
+
 
 export async function addStandardEndpoint(req: Request, res: Response) {
     const { name } = req.body;
@@ -354,11 +359,11 @@ export async function deleteStandardEndpoint(req: Request, res: Response) {
     }
 }
 
-export async function addTeacherIdsFromStdSubEndpoint(req: Request, res: Response) {
+export async function assignSubjectTeacherEndpoint(req: Request, res: Response) {
     const { standardId, subjectName, teacherId } = req.body;
     try {
-        await addTeacherIdsFromStdSub(standardId, subjectName, teacherId);
-        res.status(200).send({ message: 'Teacher IDs added successfully' });
+        await assignSubjectTeacher(standardId, subjectName, teacherId);
+        res.status(200).send({ message: 'Teachers assign successfully' });
     } catch (error) {
         res.status(500).send({ message: 'Error adding teacher IDs', error });
     }
@@ -374,15 +379,6 @@ export async function addStudentIdToStdSubEndpoint(req: Request, res: Response) 
     }
 }
 
-export async function deleteStudentFromStdSubEndpoint(req: Request, res: Response) {
-    const { standardId, subjectName, studentId } = req.body;
-    try {
-        await deleteStudentFromStdSub(standardId, subjectName, studentId);
-        res.status(200).send({ message: 'Student removed successfully' });
-    } catch (error) {
-        res.status(500).send({ message: 'Error removing student from standard', error });
-    }
-}
 
 export async function deleteStudentIdFromStdSubEndpoint(req: Request, res: Response) {
     const { standardId, studentId } = req.body;
@@ -394,10 +390,10 @@ export async function deleteStudentIdFromStdSubEndpoint(req: Request, res: Respo
     }
 }
 
-export async function addClassTeacherToStandardEndpoint(req: Request, res: Response) {
+export async function assignClassTeacherEndpoint(req: Request, res: Response) {
     const { standardId, teacherId } = req.body;
     try {
-        await addClassTeacherToStandard(standardId, teacherId);
+        await assignClassTeacher(standardId, teacherId);
         res.status(200).send({ message: 'Class teacher added successfully' });
     } catch (error) {
         res.status(500).send({ message: 'Error adding class teacher', error });
@@ -411,5 +407,15 @@ export async function deleteTeacherIdFromStdSubEndpoint(req: Request, res: Respo
         res.status(200).send({ message: 'Class teacher removed successfully' });
     } catch (error) {
         res.status(500).send({ message: 'Error removing class teacher', error });
+    }
+}
+
+export async function deleteTeacherFromSubjectInStandardEndpoint(req: Request, res: Response) {
+    const { standardId, subjectName, teacherId } = req.body;
+    try {
+        await deleteTeacherFromSubjectInStandard(standardId, subjectName, teacherId);
+        res.status(200).send({ message: 'Teacher removed successfully' });
+    } catch (error) {
+        res.status(500).send({ message: 'Error removing teacher', error });
     }
 }

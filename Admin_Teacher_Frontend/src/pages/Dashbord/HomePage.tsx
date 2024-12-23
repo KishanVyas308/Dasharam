@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,8 +13,6 @@ import {
   FaClipboardList,
   FaUserCheck,
   FaBars,
-  FaTimes,
-  FaUserCircle,
   FaSignOutAlt,
 } from "react-icons/fa";
 import { UserRole } from "../../types/type";
@@ -52,6 +50,8 @@ export default function Dashboard() {
       <AnimatePresence>
         <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} isHome={true}/>
       </AnimatePresence>
+
+      
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -163,21 +163,21 @@ const DashboardComponent = ({ item, index }: dashbardComponentType) => {
   );
 };
 
-const SidebarComponent = ({ item, index }: dashbardComponentType) => {
-  return (
-    <motion.div
-      key={item.title}
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.1 }}
-    >
-      <Link
-        to={item.link}
-        className="flex items-center px-6 py-3 text-gray-100 hover:bg-indigo-800 transition-colors duration-200"
-      >
-        <item.icon className="w-5 h-5 mr-3" />
-        {item.title}
-      </Link>
-    </motion.div>
-  );
-};
+// const SidebarComponent = ({ item, index }: dashbardComponentType) => {
+//   return (
+//     <motion.div
+//       key={item.title}
+//       initial={{ opacity: 0, x: -20 }}
+//       animate={{ opacity: 1, x: 0 }}
+//       transition={{ delay: index * 0.1 }}
+//     >
+//       <Link
+//         to={item.link}
+//         className="flex items-center px-6 py-3 text-gray-100 hover:bg-indigo-800 transition-colors duration-200"
+//       >
+//         <item.icon className="w-5 h-5 mr-3" />
+//         {item.title}
+//       </Link>
+//     </motion.div>
+//   );
+// };

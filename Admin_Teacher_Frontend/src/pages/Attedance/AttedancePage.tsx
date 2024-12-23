@@ -1,19 +1,23 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { motion } from 'framer-motion'
 import { teachersAtom } from '../../state/teachersAtom'
 import { stdSubAtom } from '../../state/stdSubAtom'
 import { studentsAtom } from '../../state/studentsAtom'
 import { userAtom } from '../../state/userAtom'
-import { getAllTeachers } from '../../backend/handleTeacher'
-import { getAllStdSub } from '../../backend/subjectStdHandle'
-import { getAllStudents } from '../../backend/handleStudent'
+// import { getAllTeachers } from '../../backend/handleTeacher'
+// import { getAllStdSub } from '../../backend/subjectStdHandle'
+// import { getAllStudents } from '../../backend/handleStudent'
 import AddAttendance from './AddAttedance'
-import { FaBars, FaUserCircle, FaSignOutAlt, FaChalkboardTeacher, FaUserGraduate, FaBook, FaClipboardList, FaUserCheck, FaTimes } from 'react-icons/fa'
+import { FaBars, FaSignOutAlt, FaChalkboardTeacher, FaUserGraduate, FaBook, FaClipboardList, FaUserCheck, FaTimes } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import Cookies from 'js-cookie'
+import axios from 'axios'
+import { BACKEND_URL } from '../../config'
+import { toast } from 'react-toastify'
+import Loading from '../../components/Loading'
 
 const menuItems = [
   { title: "Manage Subjects", icon: FaBook, link: "/subject-std" },
@@ -33,6 +37,8 @@ export default function AttendancePage() {
   const [isProfileOpen, setProfileOpen] = useState(false)
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false)
 
+  const [isLoading, setIsLoading] = useState(true)
+
   useEffect(() => {
     const handleResize = () => {
       setSidebarOpen(window.innerWidth > 768)
@@ -42,15 +48,75 @@ export default function AttendancePage() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  const getAllTeachers = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/teacher/all`)
+      if (res.status === 200) {
+        setIsLoading(false)
+        return res.data
+      }
+    } catch (error: any) {
+      setIsLoading(false)
+      toast.error("Failed to fetch updated teachers list")
+      return []
+    }
+
+    setIsLoading(false)
+  }
+
+  const getAllStdSub = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      if (res.status === 200) {
+        setIsLoading(false)
+        return res.data
+      }
+    } catch (error: any) {
+      setIsLoading(false)
+      toast.error("Failed to fetch updated standards list")
+      return []
+    }
+    setIsLoading(false)
+  }
+
+  const getAllStudents= async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/student/all`)
+      console.log("students", res.data);  
+      
+      if (res.status === 200) {
+        setIsLoading(false)
+        return res.data
+      }
+    } catch (error: any) {
+      setIsLoading(false)
+      toast.error("Failed to fetch updated standards list")
+      return []
+    }
+    setIsLoading(false)
+  }
+
   useEffect(() => {
     if (teachers.length === 0) {
       getAllTeachers().then((data) => setTeachers(data))
     }
+    else {
+      setIsLoading(false)
+    }
     if (stdSubjects.length === 0) {
       getAllStdSub().then((data) => setStdSubjects(data))
     }
+    else {
+      setIsLoading(false)
+    }
     if (students.length === 0) {
-      getAllStudents().then((data) => setStudents(data || []))
+      getAllStudents().then((data) => {
+        setStudents(data)
+        console.log(data);
+        
+      })
+    } else {
+      setIsLoading(false)
     }
   }, [])
 
@@ -69,6 +135,9 @@ export default function AttendancePage() {
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
+      {
+        isLoading && <Loading />
+      }
       {/* Sidebar */}
       <motion.aside
         initial={{ x: window.innerWidth <= 768 ? -300 : 0 }}

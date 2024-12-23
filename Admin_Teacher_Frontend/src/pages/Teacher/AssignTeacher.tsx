@@ -1,12 +1,16 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import  { useState } from 'react'
+import { useRecoilValue } from 'recoil'
 import { motion } from 'framer-motion'
 import { stdSubAtom } from '../../state/stdSubAtom'
 import { teachersAtom } from '../../state/teachersAtom'
-import { addTeacherIdsFromStdSub, addClassTeacherToStandard } from '../../backend/subjectStdHandle'
+// import { addTeacherIdsFromStdSub, addClassTeacherToStandard } from '../../backend/subjectStdHandle'
 import { FaChalkboardTeacher, FaUserTie } from 'react-icons/fa'
+import axios from 'axios'
+import { BACKEND_URL } from '../../config'
+import { toast } from 'react-toastify'
+import Loading from '../../components/Loading'
 
 const AssignTeacher = () => {
   const [standardId, setStandardId] = useState("")
@@ -15,23 +19,60 @@ const AssignTeacher = () => {
   const standards = useRecoilValue(stdSubAtom)
   const teachers = useRecoilValue(teachersAtom)
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const [standardIdCT, setStandardIdCT] = useState("")
   const [teacherIdCT, setTeacherIdCT] = useState("")
 
   const handleAssignTeacher = async () => {
     if (standardId && subjectName && teacherId) {
-      await addTeacherIdsFromStdSub(standardId, subjectName, teacherId)
+      // await addTeacherIdsFromStdSub(standardId, subjectName, teacherId)
+      setIsLoading(true)
+      try {  
+        const res = await axios.post(`${BACKEND_URL}/subject-standard/assign-subject-teacher`, {
+          standardId,
+          subjectName,
+          teacherId
+        })
+
+        if (res.status === 200) {
+          toast.success(res.data.message)
+        }
+        setIsLoading(false)
+
+      } catch (error : any) {
+        toast.error(error.response.data.message)
+        setIsLoading(false)
+      }
     }
   }
 
   const handleAssignClassTeacher = async () => {
     if (standardIdCT && teacherIdCT) {
-      await addClassTeacherToStandard(standardIdCT, teacherIdCT)
+      setIsLoading(true)
+      try {
+        const res = await axios.post(`${BACKEND_URL}/subject-standard/assign-class-teacher`, {
+          standardId: standardIdCT,
+          teacherId: teacherIdCT
+        })
+
+        if (res.status === 200) {
+          toast.success(res.data.message)
+        }
+        setIsLoading(false)
+
+      } catch (error: any) {
+        toast.error(error.response.data.message)
+        setIsLoading(false)
+      }
     }
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {
+        isLoading && <Loading />
+      }
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -1,24 +1,34 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { motion } from 'framer-motion'
 import { teastsAtom } from '../../state/testsAtom'
 import { stdSubAtom } from '../../state/stdSubAtom'
 import { studentsAtom } from '../../state/studentsAtom'
 import { userAtom } from '../../state/userAtom'
 import { UserRole } from '../../types/type'
+import axios from 'axios'
+import { BACKEND_URL } from '../../config'
+import { toast } from 'react-toastify'
+import { teachersAtom } from '../../state/teachersAtom'
+import Loading from '../../components/Loading'
 
 export default function ManageTest() {
   const tests = useRecoilValue(teastsAtom)
-  const stdSub = useRecoilValue(stdSubAtom)
-  const students = useRecoilValue(studentsAtom)
   const user = useRecoilValue(userAtom)
 
   const [selectedStd, setSelectedStd] = useState<string>('')
   const [selectedTest, setSelectedTest] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [currentPage, setCurrentPage] = useState<number>(1)
+  const [students, setStudents] = useRecoilState<any>(studentsAtom)
+
+  const [teachers, setTeachers] = useRecoilState(teachersAtom)
+  const [stdSub, setStdSub] = useRecoilState(stdSubAtom)
+  //! add standard fetch when it loads
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const itemsPerPage = 10
 
@@ -58,12 +68,88 @@ export default function ManageTest() {
     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1)
   }
 
+  const getAllTeachers = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/teacher/all`)
+      if (res.status === 200) {
+
+        return res.data
+      }
+    } catch (error: any) {
+
+      toast.error("Failed to fetch updated teachers list")
+      return []
+    }
+  }
+  const getAllStdSub = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      if (res.status === 200) {
+        setIsLoading(false)
+        return res.data
+      }
+    } catch (error: any) {
+      setIsLoading(false)
+      toast.error("Failed to fetch updated standards list")
+      return []
+    }
+    setIsLoading(false)
+  }
+
+  const getAllStudents = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/student/all`)
+      console.log("students", res.data);
+
+      if (res.status === 200) {
+
+        return res.data
+      }
+    } catch (error: any) {
+
+      toast.error("Failed to fetch updated standards list")
+      return []
+    }
+
+  }
+
+  useEffect(() => {
+    if (teachers.length == 0) {
+      const fetchTeachers = async () => {
+        setIsLoading(true)
+        const resTeacher = await getAllTeachers()
+        setIsLoading(false)
+        setTeachers(resTeacher)
+      }
+      fetchTeachers()
+    }
+    if (stdSub.length == 0) {
+      const fetchStandards = async () => {
+        setIsLoading(true)
+        const resStandards = await getAllStdSub()
+        setIsLoading(false)
+        setStdSub(resStandards)
+      }
+      fetchStandards()
+    }
+    if (students.length === 0) {
+      const fetchStudents = async () => {
+        setIsLoading(true)
+        const data = await getAllStudents()
+        setIsLoading(false)
+        setStudents(data)
+      }
+      fetchStudents()
+    }
+  }, [])
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white p-6 rounded-lg shadow-md"
     >
+      {isLoading && <Loading />}
       <div className="flex flex-col md:flex-row gap-6">
         {/* Sidebar */}
         <div className="w-full md:w-1/4">
@@ -74,7 +160,7 @@ export default function ManageTest() {
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">All Standards</option>
-            {stdSub.map((std: any) => (
+            {stdSub && stdSub.map((std: any) => (
               <option key={std.id} value={std.id}>{std.standard}</option>
             ))}
           </select>

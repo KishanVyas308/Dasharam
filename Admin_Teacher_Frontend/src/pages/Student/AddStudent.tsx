@@ -1,28 +1,51 @@
 'use client'
 
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useRecoilState } from "recoil"
 import { studentsAtom } from "../../state/studentsAtom"
 import { stdSubAtom } from "../../state/stdSubAtom"
-import { addStudent, getAllStudents } from "../../backend/handleStudent"
-import { getAllStdSub } from "../../backend/subjectStdHandle"
+// import { addStudent, getAllStudents } from "../../backend/handleStudent"
+// import { getAllStdSub } from "../../backend/subjectStdHandle"
 import { motion } from 'framer-motion'
 import { FaUserPlus } from 'react-icons/fa'
+import axios from "axios"
+import { BACKEND_URL } from "../../config"
+import { toast } from "react-toastify"
+import Loading from "../../components/Loading"
 
 export default function AddStudent() {
   const [name, setName] = useState("")
   const [parentName, setParentName] = useState("")
   const [parentMobileNo, setParentMobileNo] = useState("")
   const [grNo, setGrNo] = useState("")
-  const [password, setPassword] = useState("")
+ 
   const [standardId, setStandardId] = useState("")
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const [students, setStudents] = useRecoilState(studentsAtom)
   const [standard, setStandard] = useRecoilState(stdSubAtom)
 
+  const getAllStdSub = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      if (res.status === 200) {
+        setIsLoading(false)
+        return res.data
+      }
+    } catch (error: any) {
+      setIsLoading(false)
+      toast.error("Failed to fetch updated standards list")
+      return []
+    }
+    setIsLoading(false)
+  }
+
   async function fetchStandardsSub() {
     if (standard.length === 0) {
+      setIsLoading(true)
       const data = await getAllStdSub()
+      setIsLoading(false)
       setStandard(data)
     }
   }
@@ -31,19 +54,51 @@ export default function AddStudent() {
     fetchStandardsSub()
   }, [standard])
 
+  const getAllStudents= async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/student/all`)
+      console.log("students", res.data);  
+      
+      if (res.status === 200) {
+        return res.data
+      }
+    } catch (error: any) {
+      setIsLoading(false)
+      toast.error("Failed to fetch updated standards list")
+      return []
+    }
+  }
+
   const handleAddStudent = async () => {
-    if (name && parentName && parentMobileNo && grNo && password && standardId) {
-      await addStudent(name, parentName, parentMobileNo, grNo, password, standardId)
+
+    if (name && parentName && parentMobileNo && grNo && standardId) {
+      setIsLoading(true)
+
+      try {
+        const res = await axios.post(`${BACKEND_URL}/student/add`, {
+          name,
+          parentName,
+          parentMobileNo,
+          grno: grNo,
+          standardId
+        })
+        toast.success(res.data.message)
+      } catch (error: any) {
+        setIsLoading(false)
+        toast.error("Failed to add student")
+        return
+        
+      }
       const updatedStudents = await getAllStudents()
       setStudents(updatedStudents)
       setName("")
       setParentName("")
       setParentMobileNo("")
       setGrNo("")
-      setPassword("")
+     
       setStandardId("")
     }
-    fetchStandardsSub()
+    setIsLoading(false)
   }
 
   return (
@@ -52,6 +107,9 @@ export default function AddStudent() {
       animate={{ opacity: 1, y: 0 }}
       className="bg-white p-6 rounded-lg shadow-md"
     >
+      {
+        isLoading  && <Loading />
+      }
       <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
         <FaUserPlus className="mr-2" />
         Add Student
@@ -101,17 +159,7 @@ export default function AddStudent() {
             required
           />
         </div>
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-        </div>
+        
         <div>
           <label htmlFor="standard" className="block text-sm font-medium text-gray-700 mb-1">Select Standard</label>
           <select
