@@ -6,7 +6,6 @@ import { Request, Response } from "express";
 export async function addTeacher(name: string, mobileNo: string, grNo: string, password: string) {
   try {
     await addDoc(collection(db, "teachers"), { name, mobileNo, grNo, password, role: "teacher" });
-    console.log("Teacher added successfully");
   } catch (error) {
     console.error("Error adding teacher", error);
   }
@@ -21,7 +20,6 @@ export async function assignSubjectsToTeacher(teacherId: string, subjectIds: str
       const currentSubjectToTeacher = data.data().subject_ids || [];
       const updatedSubjectToTeacher = [...new Set([...currentSubjectToTeacher, ...subjectIds])];
       await updateDoc(teacherRef, { subject_ids: updatedSubjectToTeacher });
-      console.log("Subjects assigned successfully");
       return true;
     } else {
       console.error("Teacher does not exist");
@@ -70,7 +68,6 @@ export async function deleteTeacher(teacherId: string) {
   try {
     const teacherRef = doc(db, "teachers", teacherId);
     await deleteDoc(teacherRef);
-    console.log("Teacher deleted successfully");
   } catch (error) {
     console.error("Error deleting teacher", error);
   }
@@ -81,7 +78,6 @@ export async function updateTeacher(teacherId: string, updatedData: Partial<{ na
   try {
     const teacherRef = doc(db, "teachers", teacherId);
     await updateDoc(teacherRef, updatedData);
-    console.log("Teacher updated successfully");
   } catch (error) {
     console.error("Error updating teacher", error);
   }
@@ -141,7 +137,7 @@ export async function deleteTeacherEndpoint(req: Request, res: Response) {
     await deleteTeacher(teacherId);
     res.status(200).send({ message: 'Teacher deleted successfully' });
   } catch (error) {
-    res.status(500).send({ message: 'Error deleting teacher', error });
+    res.status(500).send({ message: 'Error deleting teacher' });
   }
 }
 

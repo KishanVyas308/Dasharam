@@ -1,11 +1,15 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { motion } from 'framer-motion'
 import { teachersAtom } from '../../state/teachersAtom'
-import { addTeacher, deleteTeacher, getAllTeachers } from '../../backend/handleTeacher'
 import { FaPlus, FaTrash } from 'react-icons/fa'
+import axios from 'axios'
+import { BACKEND_URL } from '../../config'
+import Loading from '../../components/Loading'
+import { toast } from 'react-toastify'
+import ConformDeletePopUp from '../../components/conformation/ConformDeletePopUp'
 
 const AddTeacher = () => {
   const [name, setName] = useState("")
@@ -13,6 +17,10 @@ const AddTeacher = () => {
   const [grNo, setGrNo] = useState("")
   const [password, setPassword] = useState("")
   const [teachers, setTeachers] = useRecoilState(teachersAtom)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const [isConformDelete, setIsConformDelete] = useState(false)
+  const [deleteData, setDeleteData] = useState<any>({})
 
   const [currentPage, setCurrentPage] = useState(1)
   const teachersPerPage = 5
@@ -23,23 +31,70 @@ const AddTeacher = () => {
   const totalPages = Math.ceil(teachers.length / teachersPerPage)
 
   const handleAddTeacher = async () => {
+ 
     if (name && mobileNo && grNo && password) {
-      await addTeacher(name, mobileNo, grNo, password)
-      const updatedTeachers = await getAllTeachers()
-      setTeachers(updatedTeachers)
+      setIsLoading(true)
+      try {
+        const res = await axios.post(`${BACKEND_URL}/teacher/add`, {
+          name,
+          mobileNo,
+          grNo,
+          password
+        })
+        if (res.status === 200) {
+          toast.success(res.data.message)
+          const updatedTeachers = await getAllTeachers()
+          setTeachers(updatedTeachers)
+        }
+      } catch (error : any) {
+        setIsLoading(false)
+        toast.error(error.response.data.message)
+      }
+     
+     
       setName("")
       setMobileNo("")
       setGrNo("")
       setPassword("")
       setCurrentPage(1)
+      setIsLoading(false)
+    }
+  }
+
+  const getAllTeachers = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/teacher/all`)
+      if (res.status === 200) {
+        return res.data
+
+      }
+      setIsLoading(false)
+    } catch (error: any) {
+      setIsLoading(false)
+      toast.error("Failed to fetch updated teachers list")
+      return []
     }
   }
 
   const handleDeleteTeacher = async (teacherId: string) => {
-    await deleteTeacher(teacherId)
-    const updatedTeachers = await getAllTeachers()
+    setIsLoading(true)
+    try {
+      const res = await axios.delete(`${BACKEND_URL}/teacher/delete/${teacherId}`)
+      if (res.status === 200) {
+      toast.success(res.data.message)
+      setIsConformDelete(false)
+    }
+  } catch (error: any) {
+    setIsLoading(false)
+    toast.error(error.response.data.message)
+    setIsConformDelete(false)
+  }
+  const updatedTeachers = await getAllTeachers()
+    console.log(updatedTeachers);
+    
     setTeachers(updatedTeachers)
     setCurrentPage(1)
+    setIsLoading(false)
   }
 
   const handlePageChange = (page: number) => {
@@ -49,7 +104,12 @@ const AddTeacher = () => {
   return (
     <div>
       {/* Navbar */}
-  
+      {
+        isLoading && <Loading />
+      }
+      {
+        isConformDelete &&  <ConformDeletePopUp handleClose={() => setIsConformDelete(false)} handleConfirm={() => handleDeleteTeacher(deleteData.id)} show={isConformDelete} />
+      }
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -105,7 +165,10 @@ const AddTeacher = () => {
               >
                 <span>{teacher.name} - {teacher.mobileNo}</span>
                 <button
-                  onClick={() => handleDeleteTeacher(teacher.id)}
+                  onClick={() => {
+                    setIsConformDelete(true)
+                    setDeleteData({id : teacher.id})
+                  }}
                   className="p-1 text-red-500 hover:text-red-600"
                 >
                   <FaTrash size={16} />

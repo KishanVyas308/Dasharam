@@ -1,27 +1,21 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { motion } from 'framer-motion'
 import { studentsAtom } from '../../state/studentsAtom'
 import { stdSubAtom } from '../../state/stdSubAtom'
 import { userAtom } from '../../state/userAtom'
-import { getAllStudents } from '../../backend/handleStudent'
-import { getAllStdSub } from '../../backend/subjectStdHandle'
+// import { getAllStudents } from '../../backend/handleStudent'
+// import { getAllStdSub } from '../../backend/subjectStdHandle'
 import AddStudent from './AddStudent'
 import ManageStudent from './ManageStudent'
-import { FaBars, FaUserCircle, FaSignOutAlt, FaChalkboardTeacher, FaUserGraduate, FaBook, FaClipboardList, FaUserCheck, FaTimes } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { FaBars, FaSignOutAlt } from 'react-icons/fa'
 import Cookies from 'js-cookie'
 import Sidebar from '../Dashbord/Sidebar'
-
-const menuItems = [
-  { title: "Manage Subjects", icon: FaBook, link: "/subject-std" },
-  { title: "Manage Teachers", icon: FaChalkboardTeacher, link: "/manage-teacher" },
-  { title: "Manage Students", icon: FaUserGraduate, link: "/manage-student" },
-  { title: "Manage Tests", icon: FaClipboardList, link: "/manage-test" },
-  { title: "Attendance", icon: FaUserCheck, link: "/add-attedance" },
-]
+import axios from 'axios'
+import { BACKEND_URL } from '../../config'
+import { toast } from 'react-toastify'
+import Loading from '../../components/Loading'
 
 export default function ManageStudentPage() {
   const [students, setStudents] = useRecoilState<any>(studentsAtom)
@@ -32,6 +26,8 @@ export default function ManageStudentPage() {
   const [activeTab, setActiveTab] = useState('add') // 'add' or 'manage'
   const [showLogout, setShowLogout] = useState(false) // state to track profile click
 
+  const [isLoading, setIsLoading] = useState(false)
+
   useEffect(() => {
     const handleResize = () => {
       setSidebarOpen(window.innerWidth > 768)
@@ -41,14 +37,48 @@ export default function ManageStudentPage() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  const getAllStudents = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/student/all`)
+      console.log("students", res.data);
+
+      if (res.status === 200) {
+
+        return res.data
+      }
+    } catch (error: any) {
+      toast.error("Failed to fetch updated standards list")
+      return []
+    }
+  }
+
+  const getAllStdSub = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      if (res.status === 200) {
+
+        return res.data
+      }
+    } catch (error: any) {
+
+      toast.error("Failed to fetch updated standards list")
+      return []
+    }
+
+  }
+
   useEffect(() => {
     async function fetchData() {
       if (students.length === 0) {
+        setIsLoading(true)
         const studentsData = await getAllStudents()
+        setIsLoading(false)
         setStudents(studentsData)
       }
       if (subjects.length === 0) {
+        setIsLoading(true)
         const subjectsData = await getAllStdSub()
+        setIsLoading(false)
         setSubjects(subjectsData)
       }
     }
@@ -71,8 +101,9 @@ export default function ManageStudentPage() {
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
+      {isLoading && <Loading />}
       {/* Sidebar */}
-      <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>
+      <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">    {/* Header */}
@@ -87,7 +118,7 @@ export default function ManageStudentPage() {
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <div className="flex items-center space-x-2 cursor-pointer" onClick={handleProfileClick}>
-                <img
+                  <img
                     src="https://th.bing.com/th/id/OIP.n0waXJvNzJqj3wmDBfS1ZwHaHa?w=165&h=180&c=7&r=0&o=5&dpr=2&pid=1.7"
                     alt="User Avatar"
                     className="rounded-full w-10 h-10"
@@ -116,21 +147,19 @@ export default function ManageStudentPage() {
               <div className="flex space-x-4">
                 <button
                   onClick={() => setActiveTab('add')}
-                  className={`px-4 py-2 rounded-md ${
-                    activeTab === 'add'
+                  className={`px-4 py-2 rounded-md ${activeTab === 'add'
                       ? 'bg-indigo-600 text-white'
                       : 'bg-white text-indigo-600 hover:bg-indigo-50'
-                  }`}
+                    }`}
                 >
                   Add Student
                 </button>
                 <button
                   onClick={() => setActiveTab('manage')}
-                  className={`px-4 py-2 rounded-md ${
-                    activeTab === 'manage'
+                  className={`px-4 py-2 rounded-md ${activeTab === 'manage'
                       ? 'bg-indigo-600 text-white'
                       : 'bg-white text-indigo-600 hover:bg-indigo-50'
-                  }`}
+                    }`}
                 >
                   Manage Students
                 </button>

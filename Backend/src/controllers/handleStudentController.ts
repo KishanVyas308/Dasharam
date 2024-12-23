@@ -15,22 +15,19 @@ import { addStudentIdToStdSub, deleteStudentIdFromStdSub } from "./handleSubject
 // ]
 
 // TODO: add student
-export async function addStudent(name: string, parentName: string, parentMobileNo: string, grno: string, password: string, standardId: string) {
+export async function addStudent(name: string, parentName: string, parentMobileNo: string, grno: string, standardId: string) {
     const student = {
         name,
         parentName,
         parentMobileNo,
         grno,
-        password,
         standardId,
         role: "student"
     };
     try {
         const studentRef = await addDoc(collection(db, "students"), student);
         await addStudentIdToStdSub(standardId, studentRef.id);
-        console.log("Student added successfully");
     } catch (error) {
-        console.log("Error adding student", error);
     }
 }
 
@@ -45,7 +42,6 @@ export async function getAllStudents() {
         });
         return result;
     } catch (error) {
-        console.log("Error getting all students", error);
         return null;
     }
 }
@@ -58,11 +54,9 @@ export async function getStudentById(studentId: string) {
         if (docSnap.exists()) {
             return { id: docSnap.id, ...docSnap.data() };
         } else {
-            console.log("No such student");
             return null;
         }
     } catch (error) {
-        console.log("Error getting student by id", error);
         return null;
     }
 }
@@ -70,31 +64,29 @@ export async function getStudentById(studentId: string) {
 // TODO: delete student
 export async function deleteStudent(studentId: string, standardId: string) {
     try {
+  
+        
         const studentRef = doc(db, "students", studentId);
         await deleteDoc(studentRef);
         await deleteStudentIdFromStdSub(standardId, studentId);
-        console.log("Student deleted successfully");
     } catch (error) {
-        console.log("Error deleting student", error);
     }
 }
 
 // TODO: edit student
-export async function editStudent(studentId: string, name: string, parentName: string, parentMobileNo: string, grno: string, password: string, standardId: string) {
+export async function editStudent(studentId: string, name: string, parentName: string, parentMobileNo: string, grno: string,  standardId: string) {
     try {
         const studentRef = doc(db, "students", studentId);
-        await updateDoc(studentRef, { name, parentName, parentMobileNo, grno, password, standardId });
-        console.log("Student edited successfully");
+        await updateDoc(studentRef, { name, parentName, parentMobileNo, grno, standardId });
     } catch (error) {
-        console.log("Error editing student", error);
     }
 }
 
 //! Express endpoint handlers
 export async function addStudentEndpoint(req: any, res: any) {
-    const { name, parentName, parentMobileNo, grno, password, standardId } = req.body;
+    const { name, parentName, parentMobileNo, grno, standardId } = req.body;
     try {
-        await addStudent(name, parentName, parentMobileNo, grno, password, standardId);
+        await addStudent(name, parentName, parentMobileNo, grno, standardId);
         res.status(200).send({ message: 'Student added successfully' });
     } catch (error) {
         res.status(500).send({ message: 'Error adding student', error });
@@ -127,6 +119,8 @@ export async function getStudentByIdEndpoint(req: any, res: any) {
 export async function deleteStudentEndpoint(req: any, res: any) {
     const { studentId, standardId } = req.body;
     try {
+    
+        
         await deleteStudent(studentId, standardId);
         res.status(200).send({ message: 'Student deleted successfully' });
     } catch (error) {
@@ -135,9 +129,9 @@ export async function deleteStudentEndpoint(req: any, res: any) {
 }
 
 export async function editStudentEndpoint(req: any, res: any) {
-    const { studentId, name, parentName, parentMobileNo, grno, password, standardId } = req.body;
+    const { studentId, name, parentName, parentMobileNo, grno, standardId } = req.body;
     try {
-        await editStudent(studentId, name, parentName, parentMobileNo, grno, password, standardId);
+        await editStudent(studentId, name, parentName, parentMobileNo, grno, standardId);
         res.status(200).send({ message: 'Student edited successfully' });
     } catch (error) {
         res.status(500).send({ message: 'Error editing student', error });

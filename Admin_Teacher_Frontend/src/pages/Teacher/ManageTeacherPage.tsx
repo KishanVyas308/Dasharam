@@ -1,54 +1,89 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { useRecoilState } from 'recoil'
 import { teachersAtom } from '../../state/teachersAtom'
 import { stdSubAtom } from '../../state/stdSubAtom'
 import { userAtom } from '../../state/userAtom'
-import { getAllTeachers } from '../../backend/handleTeacher'
-import { getAllStdSub } from '../../backend/subjectStdHandle'
+// import { getAllTeachers } from '../../backend/handleTeacher'
+// import { getAllStdSub } from '../../backend/subjectStdHandle'
 import AddTeacher from './AddTeacher'
 import AssignTeacher from './AssignTeacher'
-import { FaBars, FaUserCircle, FaSignOutAlt, FaChalkboardTeacher, FaUserGraduate, FaBook, FaClipboardList, FaUserCheck, FaTimes } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { FaBars, FaSignOutAlt } from 'react-icons/fa'
 import Cookies from 'js-cookie'
 import Sidebar from '../Dashbord/Sidebar'
-
-const menuItems = [
-  { title: "Manage Subjects", icon: FaBook, link: "/subject-std" },
-  { title: "Manage Teachers", icon: FaChalkboardTeacher, link: "/manage-teacher" },
-  { title: "Manage Students", icon: FaUserGraduate, link: "/manage-student" },
-  { title: "Manage Tests", icon: FaClipboardList, link: "/manage-test" },
-  { title: "Attendance", icon: FaUserCheck, link: "/add-attedance" },
-]
+import axios from 'axios'
+import { BACKEND_URL } from '../../config'
+import { toast } from 'react-toastify'
+import Loading from '../../components/Loading'
 
 export default function ManageTeacherPage() {
-  const [, setTeachers] = useRecoilState(teachersAtom)
-  const [, setStdSub] = useRecoilState(stdSubAtom)
-  const user = useRecoilValue(userAtom)
+  const [teachers, setTeachers] = useRecoilState(teachersAtom)
+  const [stdSub, setStdSub] = useRecoilState(stdSubAtom)
+  const [user, setUser] = useRecoilState(userAtom)
 
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false) // State to toggle dropdown
 
+  const [isLoading, setIsLoading] = useState(true)
+
+
+
+  const getAllTeachers = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/teacher/all`)
+      if (res.status === 200) {
+        setIsLoading(false)
+        return res.data
+      }
+    } catch (error: any) {
+      setIsLoading(false)
+      toast.error("Failed to fetch updated teachers list")
+      return []
+    }
+
+    setIsLoading(false)
+  }
+
+  const getAllStdSub = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      if (res.status === 200) {
+        setIsLoading(false)
+        return res.data
+      }
+    } catch (error: any) {
+      setIsLoading(false)
+      toast.error("Failed to fetch updated standards list")
+      return []
+    }
+    setIsLoading(false)
+  }
+
   useEffect(() => {
     const fetchTeachers = async () => {
-      const teachers = await getAllTeachers()
-      setTeachers(teachers)
+        if (teachers.length == 0) {
+        const resTeacher = await getAllTeachers()
+        setTeachers(resTeacher)
+      }
+      setIsLoading(false)
     }
 
     const fetchStandards = async () => {
-      const standards = await getAllStdSub()
-      setStdSub(standards)
+      if(stdSub.length == 0) {
+      const resStandards = await getAllStdSub()
+      setStdSub(resStandards)
+      }
+      setIsLoading(false)
     }
 
     fetchTeachers()
     fetchStandards()
-  }, [setTeachers, setStdSub])
+  }, [])
 
   const handleLogout = () => {
     Cookies.remove("user")
-    console.log("User logged out")
+    setUser(null)
   }
 
   const toggleSidebar = () => {
@@ -61,8 +96,11 @@ export default function ManageTeacherPage() {
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
+      {
+        isLoading && <Loading />
+      }
       {/* Sidebar */}
-      <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>
+      <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">

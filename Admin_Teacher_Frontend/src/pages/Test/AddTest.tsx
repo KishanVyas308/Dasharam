@@ -10,8 +10,12 @@ import { userAtom } from "../../state/userAtom"
 import { UserRole } from "../../types/type"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
-import { addTest } from "../../backend/handleTest"
+// import { addTest } from "../../backend/handleTest"
 import { motion } from 'framer-motion'
+import axios from "axios"
+import { BACKEND_URL } from "../../config"
+import { toast } from "react-toastify"
+import Loading from "../../components/Loading"
 
 export default function AddTest() {
   const [tests, setTests] = useRecoilState(teastsAtom)
@@ -27,6 +31,8 @@ export default function AddTest() {
   const [totalMarks, setTotalMarks] = useState<string>("0")
   const [takenDate, setTakenDate] = useState<Date | null>(null)
   const [selectedStdStudents, setSelectedStdStudents] = useState<any>([])
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     if (!takenDate) {
@@ -74,12 +80,38 @@ export default function AddTest() {
     setSelectedStdStudents(updatedStudents)
   }
 
+  const handleAddTest = async (e : any) => {
+    e.preventDefault()
+    setIsLoading(true)
+    try {
+      const res = await axios.post(`${BACKEND_URL}/test/add`, {
+      name,
+      standardId,
+      subject,
+      takenByTeacherId,
+      totalMarks,
+      takenDate: takenDate?.toISOString() || "",
+      students: selectedStdStudents
+      })
+      if (res.data.test) {
+      setTests([...tests, res.data.test])
+      }
+      setIsLoading(false)
+      toast.success(res.data.message)
+    } catch (error : any) {
+      setIsLoading(false)
+      toast.error(error.response.data.message)
+    }
+    setIsLoading(false)
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white p-6 rounded-lg shadow-md"
     >
+      {isLoading && <Loading />}
       <h2 className="text-2xl font-semibold text-gray-800 mb-6">Add Test</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
@@ -168,6 +200,7 @@ export default function AddTest() {
             <div className="flex items-center space-x-2">
               <input
                 type="number"
+                onClick={(e) => e.currentTarget.select()}
                 value={selectedStdStudents.find((s: any) => s.studentId === student.id)?.marks || "0"}
                 onChange={(e) => handleMarksChange(student.id, e.target.value)}
                 className="w-20 px-2 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -181,29 +214,7 @@ export default function AddTest() {
       <div className="flex justify-end">
         <button
           className="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition duration-200"
-          onClick={async () => {
-            console.log({
-              name,
-              standardId,
-              subject,
-              takenByTeacherId,
-              totalMarks,
-              takenDate,
-              selectedStdStudents,
-            })
-            const res = await addTest(
-              name,
-              standardId,
-              subject,
-              takenByTeacherId,
-              totalMarks,
-              takenDate?.toISOString() || "",
-              selectedStdStudents
-            )
-            if (res) {
-              setTests([...tests, res])
-            }
-          }}
+          onClick={(e) => handleAddTest(e)}
         >
           Add Test
         </button>

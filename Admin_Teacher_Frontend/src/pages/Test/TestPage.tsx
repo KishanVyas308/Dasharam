@@ -1,65 +1,37 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { motion } from "framer-motion";
-import { teastsAtom } from "../../state/testsAtom";
+import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
+
 import { userAtom } from "../../state/userAtom";
-import { getAllTests } from "../../backend/handleTest";
+// import { getAllTests } from "../../backend/handleTest";
 import AddTest from "./AddTest";
 import ManageTest from "./ManageTest";
 import {
   FaBars,
-  FaUserCircle,
   FaSignOutAlt,
-  FaChalkboardTeacher,
-  FaUserGraduate,
-  FaBook,
-  FaClipboardList,
-  FaUserCheck,
-  FaTimes,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import Sidebar from "../Dashbord/Sidebar";
 
-const menuItems = [
-  { title: "Manage Subjects", icon: FaBook, link: "/subject-std" },
-  {
-    title: "Manage Teachers",
-    icon: FaChalkboardTeacher,
-    link: "/manage-teacher",
-  },
-  { title: "Manage Students", icon: FaUserGraduate, link: "/manage-student" },
-  { title: "Manage Tests", icon: FaClipboardList, link: "/manage-test" },
-  { title: "Attendance", icon: FaUserCheck, link: "/add-attedance" },
-];
-
 export default function TestPage() {
-  const [tests, setTests] = useRecoilState(teastsAtom);
+
   const user = useRecoilValue(userAtom);
 
   const [isSidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
+
 
   useEffect(() => {
     const handleResize = () => {
       setSidebarOpen(window.innerWidth > 768);
     };
 
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    async function fetchTests() {
-      if (tests.length === 0) {
-        const result = await getAllTests();
-        setTests(result);
-      }
-    }
-    fetchTests();
-  }, [tests, setTests]);
 
   const handleLogout = () => {
     Cookies.remove("user");
@@ -76,6 +48,7 @@ export default function TestPage() {
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
+
       {/* Sidebar */}
       <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 

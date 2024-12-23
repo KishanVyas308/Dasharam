@@ -6,15 +6,17 @@ import { useNavigate } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import Cookies from 'js-cookie'
 import { userAtom } from '../../state/userAtom'
-import { login } from '../../backend/auth'
-import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa'
+import { FaUser, FaLock } from 'react-icons/fa'
 import Lottie from 'react-lottie-player'
+import axios from 'axios'
 
 // Import Lottie animations
 import loginAnimation from './login-animation.json'
 import successAnimation from './success-animation.json'
+import { toast } from 'react-toastify'
+import { BACKEND_URL } from '../../config'
 
-const InputField = ({ icon: Icon, ...props }) => (
+const InputField = ({ icon: Icon, ...props }: { icon: any; [key: string]: any }) => (
   <div className="relative">
     <Icon className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400" />
     <input
@@ -36,18 +38,35 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    const admin = await login(name, password)
-    if (admin != null) {
+ 
+
+    try {
+
+      const response = await axios.post(`${BACKEND_URL}/auth/login`, {
+        name,
+        password
+      })
+
+      
+    if(response.status != 200) {
+      setIsLoading(false)
+      toast.error(response.data.message)
+      return
+    }
+
+    const admin = response.data.data
       Cookies.set('user', JSON.stringify(admin), { expires: 0.25 }) // 6 hours
       setCurrentAdmin(admin)
       setIsSuccess(true)
       setTimeout(() => {
         navigate('/')
       }, 3000)
-    } else {
+    } catch (error : any) {
       setIsLoading(false)
-      alert('Invalid Email or Password')
+      toast.error(error.response.data.message)
     }
+
+  
   }
 
   useEffect(() => {
@@ -91,7 +110,7 @@ export default function Login() {
                 type="text"
                 id="name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e : any) => setName(e.target.value)}
                 placeholder="Username"
                 required
                 disabled={isLoading || isSuccess}
