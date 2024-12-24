@@ -9,7 +9,6 @@ import { userAtom } from "../../state/userAtom"
 import { UserRole } from "../../types/type"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
-// import { addAttendance, checkAttendance } from "../../backend/handleAttandance"
 import { motion } from 'framer-motion'
 import axios from "axios"
 import { BACKEND_URL } from "../../config"

@@ -3,8 +3,8 @@ import { FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { userAtom } from "../../state/userAtom";
-import { menuItems } from "./HomePage";
 import { UserRole } from "../../types/type";
+import { menuItems } from "../../App";
 
 const Sidebar = ({isSidebarOpen, toggleSidebar, isHome = false} : {isSidebarOpen : any, toggleSidebar : any, isHome?: boolean}) => {
     const user = useRecoilValue(userAtom);
@@ -19,7 +19,9 @@ const Sidebar = ({isSidebarOpen, toggleSidebar, isHome = false} : {isSidebarOpen
           className="fixed md:static top-0 left-0 h-full w-64 bg-indigo-700 text-white shadow-lg z-50"
         >
           <div className="p-5 flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Dasharam SMS</h1>
+            <Link to="/" className="text-white">
+            <h1 className="text-2xl font-bold">Dasaram</h1>
+            </Link>
             <button onClick={toggleSidebar} className="md:hidden text-white">
               <FaTimes size={24} />
             </button>
