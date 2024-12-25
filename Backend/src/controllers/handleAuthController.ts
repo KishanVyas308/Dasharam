@@ -13,12 +13,10 @@ export const login = async (req: any, res: any) => {
 
       if (adminData.password === password) {
         //? ADMIN LOGIN
-        return res
-          .status(200)
-          .json({
-            data: { ...adminData, id: adminDoc.id },
-            message: "Admin Login Successfull",
-          });
+        return res.status(200).json({
+          data: { ...adminData, id: adminDoc.id },
+          message: "Admin Login Successfull",
+        });
       }
     }
 
@@ -32,12 +30,38 @@ export const login = async (req: any, res: any) => {
       if (teacherData.password === password) {
         //? TEACHER LOGIN
         return res.status(200).json({
-            data: { ...teacherData, id: teacherDoc.id },
-            message: "Teacher Login Successfull",
-            });
+          data: { ...teacherData, id: teacherDoc.id },
+          message: "Teacher Login Successfull",
+        });
       }
     }
   } catch (error) {
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+
+  return res.status(401).json({ message: "Invalid Credentials" });
+};
+
+export const loginStundent = async (req: any, res: any) => {
+  try {
+    const { grno } = req.body;
+    const q = query(collection(db, "students"), where("grno", "==", grno));
+    const querySnapshot = await getDocs(q);
+
+
+    if (!querySnapshot.empty) {
+      const studentDoc = querySnapshot.docs[0];
+      const studentData = studentDoc.data();
+      console.log(studentData);
+      
+      return res.status(200).json({
+        data: { ...studentData, id: studentDoc.id },
+        message: "Student Login Successful",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    
     return res.status(500).json({ message: "Internal Server Error" });
   }
 

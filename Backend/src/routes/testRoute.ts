@@ -1,5 +1,5 @@
 import express from 'express';
-import { addTestEndpoint, getAllTestsEndpoint, getStudentIdsFromTestEndpoint, getStudentDetailsFromIdsEndpoint, deleteTestEndpoint, editTestEndpoint } from '../controllers/handleTestController';
+import { addTestEndpoint, getAllTestsEndpoint, getStudentIdsFromTestEndpoint, getStudentDetailsFromIdsEndpoint, deleteTestEndpoint, editTestEndpoint, getAllTestsByStandardEndpoint } from '../controllers/handleTestController';
 
 const router = express.Router();
 
@@ -20,5 +20,9 @@ router.delete('/delete', deleteTestEndpoint);
 
 // Endpoint to edit a test
 router.put('/edit', editTestEndpoint);
+
+//Endpoint to get all tests by standard
+router.get('/standard/:standardId', getAllTestsByStandardEndpoint);
+
 
 export default router;
