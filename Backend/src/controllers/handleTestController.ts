@@ -103,6 +103,40 @@ export async function editTest(testId: string, name: string, standardId: string,
     }
 }
 
+export async function getAllTestsByStandard(standardId: string) {
+    try {
+        const testsCollection = collection(db, "tests");
+        const q = query(testsCollection, where("standardId", "==", standardId));
+        
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+            return []; // Return an empty array if no tests found
+        }
+
+        const tests = querySnapshot.docs.map((doc) => {
+            return { id: doc.id, ...doc.data() };
+        });
+
+        return tests; // Return the tests array
+    } catch (error) {
+        console.error("Error fetching tests: ", error);
+        return null; // Return null in case of error
+    }
+}
+
+export async function getAllTestsByStandardEndpoint(req: any, res: any) {
+    const { standardId } = req.params;
+    try {
+        console.log("standardId test", standardId);
+        const tests = await getAllTestsByStandard(standardId);
+        console.log("tests test", tests);
+        
+        res.status(200).send(tests);
+    } catch (error) {
+        res.status(500).send({ message: 'Error fetching tests by standard', error });
+    }
+}
+
 //! Express endpoint handlers
 export async function addTestEndpoint(req: any, res: any) {
     const { name, standardId, subject, takenByTeacherId, totalMarks, takenDate, students } = req.body;

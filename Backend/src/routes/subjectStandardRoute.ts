@@ -12,7 +12,7 @@ import {
     deleteStudentIdFromStdSubEndpoint,
     assignClassTeacherEndpoint,
     deleteTeacherIdFromStdSubEndpoint,
-    deleteTeacherFromSubjectInStandardEndpoint
+    deleteTeacherFromSubjectInStandardEndpoint,
 } from '../controllers/handleSubjectStandardController';
 
 const router = Router();
