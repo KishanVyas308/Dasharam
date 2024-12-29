@@ -60,8 +60,7 @@ export async function checkAddToken(req: any, res: any) {
   return res.status(400).json({ message: "Token or standardId not provided" });
 }
 
-export async function sendNotification(req: any, res: any) {
-  const { standardId, title, body } = req.body;
+export async function sendNotification(standardId  :any, title: any, body: any) {
   if (standardId && title && body) {
     const standardRef = doc(db, "notfy", standardId);
     const docSnap = await getDoc(standardRef);
@@ -71,15 +70,11 @@ export async function sendNotification(req: any, res: any) {
       if (data.tokens) {
         // send notification
         sendNotificationToTokens(data.tokens, title, body);
-        return res.status(200).json({ message: "Notification sent" });
       } else {
-        return res.status(400).json({ message: "No tokens found" });
       }
     } else {
-      return res.status(400).json({ message: "Standard not found" });
     }
   }
-  return res.status(400).json({ message: "Token, title or body not provided" });
 }
 
 async function sendNotificationToTokens(
