@@ -98,3 +98,29 @@ async function sendNotificationToTokens(
     console.error("Error sending message:", error);
   }
 }
+
+
+export async function removeToken(req: any, res: any) {
+    const { token, standardId } = req.body;
+    if (token && standardId) {
+        const standardRef = doc(db, "notfy", standardId);
+        const docSnap = await getDoc(standardRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data.tokens && data.tokens.includes(token)) {
+                const updatedTokens = data.tokens.filter((t: string) => t !== token);
+                await updateDoc(standardRef, {
+                    tokens: updatedTokens,
+                });
+                return res.status(200).json({ message: "Token removed" });
+            } else {
+                return res.status(404).json({ message: "Token not found" });
+            }
+        } else {
+            return res.status(404).json({ message: "Standard not found" });
+        }
+    }
+    return res.status(400).json({ message: "Token or standardId not provided" });
+
+}
