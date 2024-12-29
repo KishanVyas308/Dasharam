@@ -1,5 +1,6 @@
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../firebase";
+import { sendNotification } from "./notfyController";
 
 // test collection
 // [
@@ -142,6 +143,7 @@ export async function addTestEndpoint(req: any, res: any) {
     const { name, standardId, subject, takenByTeacherId, totalMarks, takenDate, students } = req.body;
     try {
         const test = await addTest(name, standardId, subject, takenByTeacherId, totalMarks, takenDate, students);
+        sendNotification(standardId, `New test added: ${name}`, `A new test has been added for ${subject} subject`);
         res.status(200).send({ message: 'Test added successfully', test });
     } catch (error) {
         res.status(500).send({ message: 'Error adding test', error });
