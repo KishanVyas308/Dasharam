@@ -9,26 +9,29 @@ import ManageTeacherPage from "./pages/Teacher/ManageTeacherPage";
 import ManageStudentPage from "./pages/Student/ManageStudentPage";
 import TestPage from "./pages/Test/TestPage";
 import AttedancePage from "./pages/Attedance/AttedancePage";
-import ManageImages from "./pages/Manage_Images/ManageImages";
 import Sidebar from "./pages/Dashbord/Sidebar";
 import { useState } from "react";
 import { FaBars, FaBook, FaChalkboardTeacher, FaClipboardList, FaSignOutAlt, FaUserCheck, FaUserGraduate } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useRecoilState } from "recoil";
 import { userAtom } from "./state/userAtom";
+import ManageLandingPage from "./pages/Manage_LandingPage/ManageLandingPage";
+import LandingPageHome from "./pages/Manage_LandingPage/LandingPageHome";
+import LandingPageAbout from "./pages/Manage_LandingPage/LandingPageAbout";
+import LandingPageGallery from "./pages/Manage_LandingPage/LandingPageGallery";
 
 
 export const menuItems = [
-  { title: "Manage Subjects", icon: FaBook, link: "/subject-std" },
+  { title: "Standard - Subjects", icon: FaBook, link: "/subject-std" },
   {
-    title: "Manage Teachers",
+    title: "Teachers",
     icon: FaChalkboardTeacher,
     link: "/manage-teacher",
   },
-  { title: "Manage Students", icon: FaUserGraduate, link: "/manage-student" },
+  { title: "Students", icon: FaUserGraduate, link: "/manage-student" },
   { title: "Manage Tests", icon: FaClipboardList, link: "/manage-test" },
   { title: "Attendance", icon: FaUserCheck, link: "/add-attedance" },
-  { title: "Manage Images", icon: FaUserCheck, link: "/manage-images" },
+  { title: "Landing Page", icon: FaUserCheck, link: "/manage-landing-page" },
 ];
 
 function App() {
@@ -60,7 +63,7 @@ function App() {
                 <div className="flex-1 flex flex-col overflow-hidden">
                   {/* Header */}
                   <header className="bg-white shadow-sm">
-                    <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                    <div className="max-w-7xl mx-auto sm:py-2 lg:py-4 sm:px-2 lg:px-8 flex justify-between items-center">
                       <div className="flex items-center">
                         <button
                           onClick={toggleSidebar}
@@ -126,9 +129,13 @@ function App() {
                           element={<AdminAuthMiddleware children={<AttedancePage />} allowAccessToTeacher={true} />}
                         />
                         <Route
-                          path="/manage-images"
-                          element={<AdminAuthMiddleware children={<ManageImages />} allowAccessToTeacher={false} />}
-                        />
+                          path="/manage-landing-page"
+                          element={<AdminAuthMiddleware children={<ManageLandingPage />} allowAccessToTeacher={false} />}
+                        >
+                          <Route index element={<LandingPageHome/>}/>
+                          <Route path="about" element={<LandingPageAbout/>} />
+                          <Route path="gallery" element={<LandingPageGallery/>} />
+                        </Route>
                       </Routes>
                     </div>
                   </main>

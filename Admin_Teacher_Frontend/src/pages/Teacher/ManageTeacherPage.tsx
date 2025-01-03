@@ -71,7 +71,7 @@ export default function ManageTeacherPage() {
     fetchStandards()
   }, [])
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div className="">
       {
         isLoading && <Loading />
       }
