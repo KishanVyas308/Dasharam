@@ -3,14 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { FaImage, FaYoutube, FaTimes, FaExpand } from 'react-icons/fa'
 
 const galleryItems = [
-  { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'School campus', category: 'Campus' },
-  { type: 'video', src: 'https://www.youtube.com/embed/dQw4w9WgXcQ', title: 'School promotional video', category: 'Events' },
-  { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Students in classroom', category: 'Academics' },
-  { type: 'video', src: 'https://www.youtube.com/embed/C0DPdy98e4c', title: 'Virtual tour', category: 'Campus' },
-  { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Sports event', category: 'Athletics' },
-  { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Art exhibition', category: 'Arts' },
-  { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Science fair', category: 'Academics' },
-  { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Graduation ceremony', category: 'Events' },
+  // { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'School campus', category: 'Campus' },
+  // { type: 'video', src: 'https://www.youtube.com/embed/dQw4w9WgXcQ', title: 'School promotional video', category: 'Events' },
+  // { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Students in classroom', category: 'Academics' },
+  // { type: 'video', src: 'https://www.youtube.com/embed/C0DPdy98e4c', title: 'Virtual tour', category: 'Campus' },
+  // { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Sports event', category: 'Athletics' },
+  // { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Art exhibition', category: 'Arts' },
+  // { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Science fair', category: 'Academics' },
+  // { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Graduation ceremony', category: 'Events' },
 ]
 
 const categories = ['All', ...new Set(galleryItems.map(item => item.category))]
