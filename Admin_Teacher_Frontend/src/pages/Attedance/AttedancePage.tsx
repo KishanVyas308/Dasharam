@@ -149,6 +149,7 @@ import { toast, ToastContentProps } from "react-toastify";
 import Loading from "../../components/Loading";
 // import ManageAttendance from "./ManageAttedance";
 import { Student } from "../../types/type";
+import ManageAttendance from "./ManageAttedance";
 
 const menuItems = [
   { title: "Manage Subjects", icon: FaBook, link: "/subject-std" },
@@ -259,7 +260,7 @@ export default function AttendancePage() {
                 </button>
               </div>
             </div>
-            {activeTab === "add" ? <AddAttendance /> :  <></>}
+            {activeTab === "add" ? <AddAttendance /> :  <ManageAttendance />}
           </div>
         </main>
   );

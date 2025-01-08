@@ -19,6 +19,7 @@ import ManageLandingPage from "./pages/Manage_LandingPage/ManageLandingPage";
 import LandingPageHome from "./pages/Manage_LandingPage/LandingPageHome";
 import LandingPageAbout from "./pages/Manage_LandingPage/LandingPageAbout";
 import LandingPageGallery from "./pages/Manage_LandingPage/LandingPageGallery";
+import ManageEventPage from "./pages/EventManagement/ManageEventPage";
 
 
 export const menuItems = [
@@ -31,6 +32,7 @@ export const menuItems = [
   { title: "Students", icon: FaUserGraduate, link: "/manage-student" },
   { title: "Manage Tests", icon: FaClipboardList, link: "/manage-test" },
   { title: "Attendance", icon: FaUserCheck, link: "/add-attedance" },
+  { title: "Events", icon: FaUserCheck, link: "/events" },
   { title: "Landing Page", icon: FaUserCheck, link: "/manage-landing-page" },
 ];
 
@@ -127,6 +129,10 @@ function App() {
                         <Route
                           path="/add-attedance"
                           element={<AdminAuthMiddleware children={<AttedancePage />} allowAccessToTeacher={true} />}
+                        />
+                        <Route 
+                          path="/events"
+                          element={<AdminAuthMiddleware children={<ManageEventPage />} allowAccessToTeacher={false} />}
                         />
                         <Route
                           path="/manage-landing-page"

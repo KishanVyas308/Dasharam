@@ -1,6 +1,7 @@
 import { addDoc, collection, query, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { where, getDocs } from "firebase/firestore";
+import { firestore } from "firebase-admin";
 
 //Todo: add attendance
 export async function addAttendance(
@@ -95,7 +96,51 @@ export async function updateAttendance(
   }
 }
 
-// Express endpoint handlers
+export async function getAttedanceFromSelectedDate(standardId: string, startDate: string, endDate: string) {
+  console.log( standardId, startDate, endDate);
+  if (!standardId || !startDate || !endDate) {
+    
+    throw new Error("Invalid input parameters");
+  }
+
+  const q = query(
+    collection(db, "attendance"),
+    where("standardId", "==", standardId),
+    where("takenDate", ">=", startDate),
+    where("takenDate", "<=", endDate)
+  );
+
+  try {
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      const attendanceData = querySnapshot.docs.map((doc) => doc.data());
+      console.log('Attendance found', attendanceData);
+      
+      return {
+        data: attendanceData,
+        isAttendanceFound: true,
+      };
+    } else {
+      console.log('No attendance found');
+      
+      return {
+        data: [],
+        isAttendanceFound: false,
+      };
+
+    }
+  } catch (error: any) {
+    console.log(error);
+    return {
+      data: [],
+      isAttendanceFound: false,
+      error: error.message,
+    };
+  }
+}
+
+
+//! Express endpoint handlers
 export async function checkAttendanceEndpoint(req: any, res: any) {
   const { standardId, takenDate } = req.body;
   try {
@@ -129,7 +174,21 @@ export async function updateAttendanceEndpoint(req: any, res: any) {
     await updateAttendance(standardId, teacherId, takenDate, students);
     res.status(200).send({ message: 'Attendance updated successfully' });
   } catch (error) {
+    console.log(error);
+    
     res.status(500).send({ message: 'Error updating attendance', error });
+  }
+}
+
+export async function getAttedanceFromSelectedDateEndpoint(req: any, res: any) {
+  const {standardId, startDate, endDate} = req.body;
+  try {
+    const data = await getAttedanceFromSelectedDate(standardId, startDate, endDate);
+    res.status(200).send(data);
+  } catch (error) {
+    console.log(error);
+    
+    res.status(500).send({ message: 'Error getting attendance', error });
   }
 }
 
