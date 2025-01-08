@@ -10,6 +10,7 @@ import teacherRoute from './routes/teacherRoute'
 import testRoute from './routes/testRoute'
 import subjectStandardRoute from './routes/subjectStandardRoute'
 import notfy from './routes/notfyRoute'
+import events from './routes/eventsRoute'
 
 //? middleware import
 import { authRateLimiter } from './middleware/midlleware';
@@ -33,6 +34,7 @@ app.use(`${api}/teacher`, teacherRoute);
 app.use(`${api}/test`, testRoute);
 app.use(`${api}/subject-standard`, subjectStandardRoute);
 app.use(`${api}/notfy`,  notfy);
+app.use(`${api}/events`,  events);
 
 
 app.listen(PORT, () => {
