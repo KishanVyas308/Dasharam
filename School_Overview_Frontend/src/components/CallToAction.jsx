@@ -17,7 +17,7 @@ const CallToAction = () => {
           
           {/* Call Button */}
           <a
-            href="tel:+1234567890" // Replace with actual phone number
+            href="+91 6356689500" // Replace with actual phone number
             className="bg-white text-[#0d9488] px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition duration-300 flex items-center space-x-2"
           >
             <span>Call Me</span>

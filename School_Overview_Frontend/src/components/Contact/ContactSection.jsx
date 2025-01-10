@@ -81,7 +81,7 @@ export default function ContactSection() {
           <div className="lg:w-3/5 w-full">
             <div className="h-full relative">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29562.13321886743!2d70.4972464119091!3d21.37064812570295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be2abe58e10748b%3A0x8b6014264a46aa19!2sBagdu%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1730887997236!5m2!1sen!2sin"
+                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1857.6257004881352!2d70.5185025!3d21.3800036!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be2abdc4c551381%3A0x26cedc8bccdc0cac!2sDasaram%20Shaikshnik%20Sankul!5e0!3m2!1sen!2sin!4v1736494987664!5m2!1sen!2sin" 
                 width="100%"
                 height="100%"
                 style={{ border: 0, minHeight: '400px' }}

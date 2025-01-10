@@ -17,6 +17,7 @@ const Header = () => {
           <img src="../../../public/dasharam_logo.png" alt="Logo" className="w-12 h-12 md:w-16 md:h-16  object-contain" />
           {/* Optional logo text, uncomment if needed */}
           {/* <Link to="/" className="text-2xl font-bold hover:text-teal-200">SchoolLogo</Link> */}
+         <p style={{fontSize:'2em'}}> Dasaram</p>
         </div>
 
         {/* Desktop Menu (hidden on small screens) */}
