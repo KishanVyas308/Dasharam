@@ -103,7 +103,7 @@ const CarouselHome = () => {
     {/* Prev (left) Arrow Button */}
 <button
   onClick={handlePrev}
-  className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white text-[#0d9488] p-4 rounded-full shadow-lg hover:bg-[#0b7c6f] hover:text-white transition-all duration-300 ease-in-out hover:scale-110"
+  className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white text-[#0d9488] p-4 rounded-full shadow-lg hover:bg-[#0b7c6f] hover:text-white transition-all duration-300 ease-in-out hover:scale-110 md:flex hidden"
 >
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +124,7 @@ const CarouselHome = () => {
 {/* Next (right) Arrow Button */}
 <button
   onClick={handleNext}
-  className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white text-[#0d9488] p-4 rounded-full shadow-lg hover:bg-[#0b7c6f] hover:text-white transition-all duration-300 ease-in-out hover:scale-110"
+  className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white text-[#0d9488] p-4 rounded-full shadow-lg hover:bg-[#0b7c6f] hover:text-white transition-all duration-300 ease-in-out hover:scale-110 md:flex hidden"
 >
   <svg
     xmlns="http://www.w3.org/2000/svg"
