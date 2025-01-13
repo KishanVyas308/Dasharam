@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:hive/hive.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainPage extends StatefulWidget {
   final String name;
@@ -189,7 +190,7 @@ class _MainPageState extends State<MainPage>
 
   Future<void> _logout(BuildContext context) async {
     var box = await Hive.openBox('userBox');
-    await box.delete('user');
+    await box.clear();
     final url = '$backendUrl/notfy/remove-token';
     final token = await notificationServices.getDeviceToken();
     try {
@@ -208,7 +209,6 @@ class _MainPageState extends State<MainPage>
       setState(() {
         isLoading = false;
       });
-      print('Error sending token and standard ID: $e');
     }
     Navigator.pushReplacement(
       context,
@@ -261,6 +261,7 @@ class _MainPageState extends State<MainPage>
   @override
   void dispose() {
     _controller.dispose();
+
     super.dispose();
   }
 
@@ -516,7 +517,9 @@ class _MainPageState extends State<MainPage>
                                                             ),
                                                           ),
                                                           Text(
-                                                            'Marks: ${test['students'][0]['marks']}',
+                                                            'Marks: ${(test['students'].firstWhere((student) => student['studentId'] == widget.studentId, orElse: () => {
+                                                                  'marks': '0'
+                                                                }))['marks']}',
                                                             style: TextStyle(
                                                               fontSize: 14,
                                                               color: Colors
@@ -553,6 +556,127 @@ class _MainPageState extends State<MainPage>
                               },
                             );
                           },
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Color.fromARGB(255, 28, 40, 51),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(25.0),
+                                ),
+                              ),
+                              builder: (context) => Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Developers',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                          'https://ugc.production.linktr.ee/da71d0eb-b447-4e93-8b94-1448d508ff37_WhatsApp-Image-2024-08-26-at-18.40.49-b4376253.jpeg?io=true&size=avatar-v3_0',
+                                        ),
+                                      ),
+                                      title: Text(
+                                        'Kishan Vyas',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        'App & Web Developer',
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                        ),
+                                      ),
+                                      trailing: ElevatedButton(
+                                        onPressed: () {
+                                          launch(
+                                              'https://linktr.ee/kishanvyas');
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Show detail',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                          'https://ugc.production.linktr.ee/8edd7bde-06ea-405a-ac57-f5b6819dd577_1000124112.jpeg?io=true&size=avatar-v3_0',
+                                        ),
+                                      ),
+                                      title: Text(
+                                        'Nit Sanghani',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        'Web Developer',
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                        ),
+                                      ),
+                                      trailing: ElevatedButton(
+                                        onPressed: () {
+                                          launch('https://linktr.ee/Nit_Patel');
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Show detail',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Developed by',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white70,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
                         ),
                       ),
                     ]),

@@ -8,6 +8,9 @@ import { useRecoilState } from 'recoil';
 import { stdSubAtom } from '../../state/stdSubAtom';
 import { studentsAtom } from '../../state/studentsAtom';
 import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import 'jspdf-autotable';
 
 const ManageAttendance: React.FC = () => {
     const [attedanceData, setAttedanceData] = useState<any>([]);
@@ -144,13 +147,40 @@ const ManageAttendance: React.FC = () => {
         XLSX.writeFile(workbook, 'attendance.xlsx');
     };
 
+    const downloadPDF = () => {
+        const doc = new jsPDF();
+        const tableColumn = ['Sr. No', 'Gr No', 'Student Name', ...dateHeaders];
+        const tableRows: any[] = [];
+
+        filteredStudents.forEach((studentId: any, index) => {
+            const rowData: any[] = [
+                index + 1,
+                getStudentGrNoById(studentId),
+                getStudentNameById(studentId),
+            ];
+            dateHeaders.forEach((date) => {
+                const attendanceData = attedanceData.find(
+                    (data: any) => data.takenDate === date
+                );
+                const studentAttendance = attendanceData?.students.find(
+                    (student: any) => student.studentId === studentId
+                );
+                rowData.push(studentAttendance ? (studentAttendance.present ? 'P' : 'A') : '-');
+            });
+            tableRows.push(rowData);
+        });
+        autoTable(doc, { head: [tableColumn], body: tableRows, startY: 20 });
+       
+        doc.text('Attendance Report', 14, 15);
+        doc.save('attendance.pdf');
+    };
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-7xl mx-auto">
             <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center text-indigo-600">Manage Attendance</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div></div>
+            <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Class</label>
                 <select
                 value={selectedClass}
@@ -189,23 +219,28 @@ const ManageAttendance: React.FC = () => {
                 />
             </div>
 
-
-            <div className="mb-8">
-            <button
-                onClick={fetchAttendance}
-                className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-200 flex items-center justify-center"
-            >
-                Fetch Attendance
-            </button>
             </div>
 
-            <div className="mb-8">
-            <button
-                onClick={downloadExcel}
-                className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200 flex items-center justify-center"
-            >
-                Download as Excel
-            </button>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <button
+                    onClick={fetchAttendance}
+                    className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-200 flex items-center justify-center"
+                >
+                    Fetch Attendance
+                </button>
+                <button
+                    onClick={downloadExcel}
+                    className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200 flex items-center justify-center"
+                >
+                    Download as Excel
+                </button>
+                <button
+                    onClick={downloadPDF}
+                    className="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-200 flex items-center justify-center"
+                >
+                    Download as PDF
+                </button>
             </div>
 
             {isLoading ? (

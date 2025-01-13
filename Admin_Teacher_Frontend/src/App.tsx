@@ -11,7 +11,7 @@ import TestPage from "./pages/Test/TestPage";
 import AttedancePage from "./pages/Attedance/AttedancePage";
 import Sidebar from "./pages/Dashbord/Sidebar";
 import { useState } from "react";
-import { FaBars, FaBook, FaChalkboardTeacher, FaClipboardList, FaSignOutAlt, FaUserCheck, FaUserGraduate } from "react-icons/fa";
+import { FaBars, FaBook, FaCalendar, FaCalendarAlt, FaChalkboardTeacher, FaClipboardList, FaGlobe, FaSignOutAlt, FaUserCheck, FaUserGraduate } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useRecoilState } from "recoil";
 import { userAtom } from "./state/userAtom";
@@ -20,20 +20,18 @@ import LandingPageHome from "./pages/Manage_LandingPage/LandingPageHome";
 import LandingPageAbout from "./pages/Manage_LandingPage/LandingPageAbout";
 import LandingPageGallery from "./pages/Manage_LandingPage/LandingPageGallery";
 import ManageEventPage from "./pages/EventManagement/ManageEventPage";
+import AcademicCalendar from "./pages/AccedamicCalender/AccedamicCalender";
 
 
 export const menuItems = [
   { title: "Standard - Subjects", icon: FaBook, link: "/subject-std" },
-  {
-    title: "Teachers",
-    icon: FaChalkboardTeacher,
-    link: "/manage-teacher",
-  },
+  { title: "Teachers", icon: FaChalkboardTeacher, link: "/manage-teacher" },
   { title: "Students", icon: FaUserGraduate, link: "/manage-student" },
   { title: "Manage Tests", icon: FaClipboardList, link: "/manage-test" },
   { title: "Attendance", icon: FaUserCheck, link: "/add-attedance" },
-  { title: "Events", icon: FaUserCheck, link: "/events" },
-  { title: "Landing Page", icon: FaUserCheck, link: "/manage-landing-page" },
+  // { title: "Events", icon: FaCalendarAlt, link: "/events" },
+  { title: "Landing Page", icon: FaGlobe, link: "/manage-landing-page" },
+  // { title: "Academic Calendar", icon: FaCalendar, link: "/academic-calender" },
 ];
 
 function App() {
@@ -133,6 +131,10 @@ function App() {
                         <Route 
                           path="/events"
                           element={<AdminAuthMiddleware children={<ManageEventPage />} allowAccessToTeacher={false} />}
+                        />
+                        <Route 
+                          path="/academic-calender"
+                          element={<AdminAuthMiddleware children={<AcademicCalendar />} allowAccessToTeacher={false} />}
                         />
                         <Route
                           path="/manage-landing-page"
