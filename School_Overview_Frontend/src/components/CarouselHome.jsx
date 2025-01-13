@@ -7,17 +7,17 @@ const carouselItems = [
   {
     title: "Welcome to Our School",
     description: "Empowering minds, shaping futures",
-    image: "public/images/IMG20230812083716.jpg",
+    image: "images/IMG20230812083716.jpg",
   },
   {
     title: "Excellence in Education",
     description: "Nurturing talent, fostering growth",
-    image: "public/images/IMG20240224084843.jpg",
+    image: "images/IMG20240224084843.jpg",
   },
   {
     title: "Innovative Learning",
     description: "Preparing students for tomorrow's challenges",
-    image: "public/images/IMG20230812093738.jpg",
+    image: "images/IMG20230812093738.jpg",
   },
 ]
 

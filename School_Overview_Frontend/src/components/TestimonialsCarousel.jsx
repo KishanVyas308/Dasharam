@@ -11,7 +11,7 @@ const testimonials = [
   {
     quote: "The school's commitment to academic excellence and personal growth is unparalleled. It's been a joy to watch my child thrive here.",
     name: "Kishan Vyas",
-    role: "Previous Student"
+    role: "Past Student"
   },
   {
     quote: "As a teacher, I'm proud to be part of an institution that truly puts students first and fosters a love for learning.",

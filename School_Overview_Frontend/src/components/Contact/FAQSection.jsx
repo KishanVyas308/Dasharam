@@ -4,15 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 const faqs = [
   {
     question: "What are the school hours?",
-    answer: "Our school hours are from 8:00 AM to 3:00 PM, Monday through Friday."
+    answer: "Our school hours are from 8:00 AM to 3:00 PM, Monday through Saturday."
   },
   {
     question: "How can I apply for admission?",
     answer: "You can apply for admission through our online application portal on our website. If you need assistance, please contact our admissions office."
-  },
-  {
-    question: "Do you offer financial aid?",
-    answer: "Yes, we offer financial aid to eligible students. Please contact our financial aid office for more information on how to apply."
   },
   {
     question: "What extracurricular activities do you offer?",

@@ -6,7 +6,7 @@ export default function ContactHero() {
     <section className="relative h-[40vh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img
-          src="https://c1.wallpaperflare.com/preview/968/730/441/building-cheyenne-photos-high-school.jpg"
+          src="images/IMG20240224084843.jpg"
           alt="School campus"
           className="w-full h-full object-cover"
         />

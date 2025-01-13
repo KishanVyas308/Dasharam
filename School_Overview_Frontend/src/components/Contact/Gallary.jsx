@@ -1,16 +1,15 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaImage, FaYoutube, FaTimes, FaExpand } from 'react-icons/fa'
+import { FaImage, FaYoutube, FaTimes } from 'react-icons/fa'
 
 const galleryItems = [
-  // { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'School campus', category: 'Campus' },
-  // { type: 'video', src: 'https://www.youtube.com/embed/dQw4w9WgXcQ', title: 'School promotional video', category: 'Events' },
-  // { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Students in classroom', category: 'Academics' },
-  // { type: 'video', src: 'https://www.youtube.com/embed/C0DPdy98e4c', title: 'Virtual tour', category: 'Campus' },
-  // { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Sports event', category: 'Athletics' },
-  // { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Art exhibition', category: 'Arts' },
-  // { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Science fair', category: 'Academics' },
-  // { type: 'image', src: '/placeholder.svg?height=400&width=600', alt: 'Graduation ceremony', category: 'Events' },
+  { type: 'video', src: 'https://www.youtube.com/watch?v=taLV8r5VpfE', title: 'School promotional video', category: 'Events' },
+  { type: 'image', src: 'images/school-campus.jpg', alt: 'School campus', category: 'Campus' },
+  { type: 'image', src: 'images/our-school.jpg', alt: 'Students in classroom', category: 'Academics' },
+  { type: 'video', src: 'https://www.youtube.com/watch?v=c1nFJWC5ZO4', title: 'Virtual tour', category: 'Campus' },
+  { type: 'video', src: 'https://www.youtube.com/watch?v=taLV8r5VpfE', alt: 'Sports event', category: 'Athletics' },
+  { type: 'video', src: 'https://www.youtube.com/watch?v=taLV8r5VpfE', alt: 'Science fair', category: 'Academics' },
+  { type: 'video', src: 'https://www.youtube.com/watch?v=taLV8r5VpfE', alt: 'Graduation ceremony', category: 'Events' },
 ]
 
 const categories = ['All', ...new Set(galleryItems.map(item => item.category))]
@@ -65,7 +64,7 @@ export default function Gallary() {
                 className="relative overflow-hidden rounded-lg shadow-lg cursor-pointer group"
                 whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedItem(item)}
+                onClick={() => item.type === 'image' && setSelectedItem(item)}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
@@ -75,15 +74,21 @@ export default function Gallary() {
                 {item.type === 'image' ? (
                   <img src={item.src} alt={item.alt} className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110" />
                 ) : (
-                  <div className="w-full h-64 bg-gray-200 flex items-center justify-center overflow-hidden">
-                    <FaYoutube className="text-6xl text-red-600 transition-transform duration-300 group-hover:scale-125" />
+                  <iframe
+                    src={`https://www.youtube.com/embed/${new URL(item.src).searchParams.get('v')}`}
+                    title={item.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-64 rounded-lg overflow-hidden shadow-lg"
+                  ></iframe>
+                )}
+                {item.type === 'image' && (
+                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="text-white text-2xl transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      <FaImage />
+                    </div>
                   </div>
                 )}
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="text-white text-2xl transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    {item.type === 'image' ? <FaImage /> : <FaYoutube />}
-                  </div>
-                </div>
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <p className="text-sm font-medium">{item.category}</p>
                   <p className="text-xs">{item.alt || item.title}</p>
@@ -114,19 +119,7 @@ export default function Gallary() {
               >
                 <FaTimes className="text-2xl" />
               </button>
-              {selectedItem.type === 'image' ? (
-                <img src={selectedItem.src} alt={selectedItem.alt} className="w-full h-auto rounded-lg shadow-lg" />
-              ) : (
-                <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-lg">
-                  <iframe
-                    src={selectedItem.src}
-                    title={selectedItem.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full"
-                  ></iframe>
-                </div>
-              )}
+              <img src={selectedItem.src} alt={selectedItem.alt} className="w-full h-auto rounded-lg shadow-lg" />
               <div className="mt-4 text-center">
                 <h3 className="text-xl font-semibold text-gray-800">{selectedItem.alt || selectedItem.title}</h3>
                 <p className="text-sm text-gray-600 mt-1">{selectedItem.category}</p>

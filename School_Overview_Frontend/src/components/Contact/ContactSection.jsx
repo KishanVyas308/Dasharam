@@ -3,17 +3,17 @@ import { motion } from 'framer-motion'
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaRegClock, FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa'
 
 const contactDetails = [
-  { icon: FaPhoneAlt, info: '+1 (123) 456-7890', label: 'Call us:' },
-  { icon: FaEnvelope, info: 'info@yourschool.edu', label: 'Email us:' },
-  { icon: FaMapMarkerAlt, info: '123 School St, City, State 12345', label: 'Visit us:' },
-  { icon: FaRegClock, info: 'Mon-Fri: 8am-4pm', label: 'Office Hours:' },
+  { icon: FaPhoneAlt, info: '+91 6356689500', label: 'Call us:' },
+  { icon: FaEnvelope, info: '', label: 'Email us:' },
+  { icon: FaMapMarkerAlt, info: 'Near prbhatpur chokdi, Bagdu, Junagadh', label: 'Visit us:' },
+  { icon: FaRegClock, info: 'Mon-Sat: 8am-4pm', label: 'Office Hours:' },
 ]
 
 const socialMedia = [
-  { icon: FaFacebookF, link: 'https://facebook.com' },
-  { icon: FaTwitter, link: 'https://twitter.com' },
-  { icon: FaInstagram, link: 'https://instagram.com' },
-  { icon: FaLinkedinIn, link: 'https://linkedin.com' },
+  // { icon: FaFacebookF, link: 'https://facebook.com' },
+  // { icon: FaTwitter, link: 'https://twitter.com' },
+  { icon: FaInstagram, link: 'https://www.youtube.com/@shreedasaramshaikshaniksan8271' },
+  { icon: FaLinkedinIn, link: 'https://www.youtube.com/@shreedasaramshaikshaniksan8271' },
 ]
 
 export default function ContactSection() {

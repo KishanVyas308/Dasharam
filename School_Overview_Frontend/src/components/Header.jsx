@@ -14,7 +14,7 @@ const Header = () => {
         {/* Logo */}
         <div className="flex items-center space-x-3">
           {/* Logo Image */}
-          <img src="../../../public/dasharam_logo.png" alt="Logo" className="w-12 h-12 md:w-16 md:h-16  object-contain" />
+          <img src="dasharam_logo.png" alt="Logo" className="w-12 h-12 md:w-16 md:h-16  object-contain" />
           {/* Optional logo text, uncomment if needed */}
           {/* <Link to="/" className="text-2xl font-bold hover:text-teal-200">SchoolLogo</Link> */}
          <p style={{fontSize:'2em'}}> Dasaram</p>
@@ -27,7 +27,7 @@ const Header = () => {
           <Link to="/contact" className="hover:text-teal-200 transition-colors duration-300">Contact</Link>
           <Link to="/gallery" className="hover:text-teal-200 transition-colors duration-300">Gallery</Link>
           <Link to="/404" className="hover:text-teal-200 transition-colors duration-300">Achievements</Link>
-          <Link to="https://dasharam-admin.pages.dev/login" className="hover:text-teal-200 transition-colors duration-300">Login</Link>
+          <Link to="https://dasaram-admin.pages.dev/login" className="hover:text-teal-200 transition-colors duration-300">Login</Link>
         </div>
 
         {/* Mobile Menu Button (hamburger icon) */}
@@ -67,7 +67,7 @@ const Header = () => {
             <Link to="/contact" onClick={toggleMenu} className="hover:text-teal-200 transition-colors duration-300">Contact</Link>
             <Link to="/gallery" onClick={toggleMenu} className="hover:text-teal-200 transition-colors duration-300">Gallery</Link>
             <Link to="/achievements" onClick={toggleMenu} className="hover:text-teal-200 transition-colors duration-300">Achievements</Link>
-            <Link to="https://dasharam-admin.pages.dev/login" onClick={toggleMenu} className="hover:text-teal-200 transition-colors duration-300">Login</Link>
+            <Link to="https://dasaram-admin.pages.dev/login" onClick={toggleMenu} className="hover:text-teal-200 transition-colors duration-300">Login</Link>
           </div>
         </div>
       </nav>

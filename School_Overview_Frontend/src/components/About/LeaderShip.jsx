@@ -5,13 +5,13 @@ const leadershipMembers = [
   { 
     name: 'Chetan Kumbhani', 
     role: 'Principal', 
-    image: 'public/images/chetan-sir.jpg',
+    image: 'images/chetan-sir.jpg',
     description: 'Mr Kumbhani Smith brings over 15 years of experience in education leadership. Her vision for our school focuses on fostering innovation, inclusivity, and academic excellence.'
   },
   { 
     name: 'Pradeep', 
     role: 'Vice Principal', 
-    image: 'public/images/pradeep-sir.jpg',
+    image: 'images/pradeep-sir.jpg',
     description: 'A distinguished alumnus, has served on our board for 15 years. His strategic guidance has been instrumental in our school\'s growth and continued success.'
   },
 ];

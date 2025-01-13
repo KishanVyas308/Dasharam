@@ -9,7 +9,7 @@ const Hero = () => {
           {/* Image Section */}
           <div className="md:w-1/2 mb-10 md:mb-0">
             <img
-              src="public/images/IMG20230805105702.jpg" // Use the imported image variable
+              src="images/school-campus.jpg" // Use the imported image variable
               alt="School campus"
               className="rounded-lg shadow-lg w-full h-auto object-fill"
             />
