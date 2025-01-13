@@ -15,10 +15,11 @@ import { teachersAtom } from '../../state/teachersAtom'
 import Loading from '../../components/Loading'
 
 export default function ManageTest() {
-  const tests = useRecoilValue(teastsAtom)
+  const [tests, setTests] = useRecoilState(teastsAtom)
   const user = useRecoilValue(userAtom)
 
   const [selectedStd, setSelectedStd] = useState<string>('')
+  const [selectedSubject, setSelectedSubject] = useState<string>('')
   const [selectedTest, setSelectedTest] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -26,9 +27,8 @@ export default function ManageTest() {
 
   const [teachers, setTeachers] = useRecoilState(teachersAtom)
   const [stdSub, setStdSub] = useRecoilState(stdSubAtom)
-  //! add standard fetch when it loads
-
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [subjects, setSubjects] = useState<any[]>([])
 
   const itemsPerPage = 10
 
@@ -36,11 +36,19 @@ export default function ManageTest() {
     if (user?.role === UserRole.Teacher && stdSub.length > 0) {
       const stdid = stdSub.find((s: any) => s.classTeacherId === user.id)
       setSelectedStd(stdid.id)
+      setSubjects(stdid.subjects)
     }
   }, [user, stdSub])
 
   const handleStdChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedStd(event.target.value)
+    const selectedStdId = event.target.value
+    setSelectedStd(selectedStdId)
+    const selectedStandard = stdSub.find((std: any) => std.id === selectedStdId)
+    setSubjects(selectedStandard ? selectedStandard.subjects : [])
+  }
+
+  const handleSubjectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSubject(event.target.value)
   }
 
   const openModal = (test: any) => {
@@ -72,15 +80,14 @@ export default function ManageTest() {
     try {
       const res = await axios.get(`${BACKEND_URL}/teacher/all`)
       if (res.status === 200) {
-
         return res.data
       }
     } catch (error: any) {
-
       toast.error("Failed to fetch updated teachers list")
       return []
     }
   }
+
   const getAllStdSub = async () => {
     try {
       const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
@@ -99,18 +106,25 @@ export default function ManageTest() {
   const getAllStudents = async () => {
     try {
       const res = await axios.get(`${BACKEND_URL}/student/all`)
-      console.log("students", res.data);
-
       if (res.status === 200) {
-
         return res.data
       }
     } catch (error: any) {
-
       toast.error("Failed to fetch updated standards list")
       return []
     }
+  }
 
+  const getAllTests = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/test/all`)
+      if (res.status === 200) {
+        return res.data
+      }
+    } catch (error: any) {
+      toast.error("Failed to fetch updated tests list")
+      return []
+    }
   }
 
   useEffect(() => {
@@ -141,6 +155,15 @@ export default function ManageTest() {
       }
       fetchStudents()
     }
+    if (tests.length === 0) {
+      const fetchTests = async () => {
+        setIsLoading(true)
+        const data = await getAllTests()
+        setTests(data)
+        setIsLoading(false)
+      }
+      fetchTests()
+    }
   }, [])
 
   return (
@@ -164,6 +187,17 @@ export default function ManageTest() {
               <option key={std.id} value={std.id}>{std.standard}</option>
             ))}
           </select>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 mt-4">Subjects</h3>
+          <select
+            value={selectedSubject}
+            onChange={handleSubjectChange}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="">All Subjects</option>
+            {subjects.map((subject: any) => (
+              <option key={subject.name} value={subject.name}>{subject.name}</option>
+            ))}
+          </select>
         </div>
 
         {/* Main Content */}
@@ -172,7 +206,7 @@ export default function ManageTest() {
           {selectedStd ? (
             <ul className="space-y-2">
               {tests
-                .filter((t: any) => t.standardId === selectedStd)
+                .filter((t: any) => t.standardId == selectedStd && (selectedSubject === '' || t.subject === selectedSubject))
                 .map((t: any) => (
                   <li
                     key={t.id}
@@ -183,8 +217,8 @@ export default function ManageTest() {
                     <p className="text-sm text-gray-600">Date: {new Date(t.takenDate).toLocaleDateString()} | Total Marks: {t.totalMarks}</p>
                   </li>
                 ))}
-              {tests.filter((t: any) => t.standardId === selectedStd).length === 0 && (
-                <p className="text-gray-600">No tests available for the selected standard.</p>
+              {tests.filter((t: any) => t.standardId === selectedStd && (selectedSubject === '' || t.subject === selectedSubject)).length === 0 && (
+                <p className="text-gray-600">No tests available for the selected standard and subject.</p>
               )}
             </ul>
           ) : (
