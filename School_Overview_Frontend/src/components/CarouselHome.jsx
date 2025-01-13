@@ -7,17 +7,17 @@ const carouselItems = [
   {
     title: "Welcome to Our School",
     description: "Empowering minds, shaping futures",
-    image: "https://th.bing.com/th/id/OIP.j1FyuMTYQdV8bOmnI2rMTgHaDt?w=341&h=174&c=7&r=0&o=5&dpr=2&pid=1.7",
+    image: "public/images/IMG20230812083716.jpg",
   },
   {
     title: "Excellence in Education",
     description: "Nurturing talent, fostering growth",
-    image: "https://th.bing.com/th/id/OIP.ZUDgXGa2D1KpDLrp-PAvcAHaEJ?w=314&h=180&c=7&r=0&o=5&dpr=2&pid=1.7",
+    image: "public/images/IMG20240224084843.jpg",
   },
   {
     title: "Innovative Learning",
     description: "Preparing students for tomorrow's challenges",
-    image: "https://th.bing.com/th/id/OIP.ZUDgXGa2D1KpDLrp-PAvcAHaEJ?w=314&h=180&c=7&r=0&o=5&dpr=2&pid=1.7",
+    image: "public/images/IMG20230812093738.jpg",
   },
 ]
 

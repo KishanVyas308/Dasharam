@@ -9,9 +9,9 @@ const Hero = () => {
           {/* Image Section */}
           <div className="md:w-1/2 mb-10 md:mb-0">
             <img
-              src={schoolImage} // Use the imported image variable
+              src="public/images/IMG20230805105702.jpg" // Use the imported image variable
               alt="School campus"
-              className="rounded-lg shadow-lg w-full h-auto"
+              className="rounded-lg shadow-lg w-full h-auto object-fill"
             />
           </div>
 
@@ -19,7 +19,7 @@ const Hero = () => {
           <div className="md:w-1/2 md:pl-10">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">About Our School</h2>
             <p className="text-gray-600 mb-6">
-              Founded in 1990, our school has been a beacon of academic excellence and personal growth. 
+              Founded in 2010, our school has been a beacon of academic excellence and personal growth. 
               We believe in nurturing not just minds, but character, preparing students for the challenges 
               of tomorrow.
             </p>

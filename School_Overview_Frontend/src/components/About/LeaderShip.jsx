@@ -3,16 +3,16 @@ import { motion } from 'framer-motion';
 
 const leadershipMembers = [
   { 
-    name: 'Kishan Vyas', 
+    name: 'Chetan Kumbhani', 
     role: 'Principal', 
-    image: 'https://th.bing.com/th/id/OIP.T28rz2lEdLmgT5HyZwYQ8QHaHa?w=163&h=188&c=7&r=0&o=5&dpr=2&pid=1.7',
-    description: 'Mr Vyas Smith brings over 20 years of experience in education leadership. Her vision for our school focuses on fostering innovation, inclusivity, and academic excellence.'
+    image: 'public/images/chetan-sir.jpg',
+    description: 'Mr Kumbhani Smith brings over 15 years of experience in education leadership. Her vision for our school focuses on fostering innovation, inclusivity, and academic excellence.'
   },
   { 
-    name: 'Nit Patel', 
-    role: 'Chairman of the Board of Trustees', 
-    image: 'https://th.bing.com/th/id/OIP.01_KY-hAeaP080zBtQJu8QHaHQ?w=197&h=193&c=7&r=0&o=5&dpr=2&pid=1.7',
-    description: 'Nit Patel, a distinguished alumnus, has served on our board for 15 years. His strategic guidance has been instrumental in our school\'s growth and continued success.'
+    name: 'Pradeep', 
+    role: 'Vice Principal', 
+    image: 'public/images/pradeep-sir.jpg',
+    description: 'A distinguished alumnus, has served on our board for 15 years. His strategic guidance has been instrumental in our school\'s growth and continued success.'
   },
 ];
 
@@ -33,7 +33,7 @@ const LeaderShip = () => {
               <img
                 src={member.image}
                 alt={member.name}
-                className="w-full h-auto rounded-lg shadow-xl transform transition duration-300 ease-in-out hover:rotate-3"
+                className="w-auto h-52 rounded-lg shadow-xl transform transition duration-300 ease-in-out hover:rotate-3"
               />
             </div>
             <div className={`md:w-2/3 ${index % 2 === 0 ? 'md:pl-12' : 'md:pr-12'}`}>

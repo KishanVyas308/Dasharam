@@ -2,10 +2,10 @@ import React from 'react'
 import { motion } from 'framer-motion'
 
 const timelineEvents = [
-  { year: 1990, event: 'School founded with 50 students' },
-  { year: 2000, event: 'Expanded campus, added new academic programs' },
-  { year: 2010, event: 'Launched innovative STEM curriculum' },
-  { year: 2020, event: 'Celebrated 30 years of educational excellence' },
+  { year: 2010, event: 'School founded with 50 students' },
+  { year: 2015, event: 'Added new academic programs' },
+  { year: 2018, event: 'Expanded campus' }
+ 
 ]
 
 export default function TimeLine() {

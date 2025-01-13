@@ -7,7 +7,7 @@ const HeroSection = () => {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://th.bing.com/th/id/OIP.voxfSntzBt4YzdCKXvf2TAHaEA?w=320&h=180&c=7&r=0&o=5&dpr=2&pid=1.7"
+          src="public/images/IMG20230805081716.jpg"
           alt="School campus"
           className="w-full h-full object-cover"
         />
@@ -33,7 +33,7 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Nurturing minds, inspiring futures since 1990
+          Nurturing minds, inspiring futures since 2010
         </motion.p>
       </div>
     </section>

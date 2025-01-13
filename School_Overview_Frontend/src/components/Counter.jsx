@@ -4,10 +4,10 @@ import { FaUsers, FaGraduationCap, FaChartBar, FaBook } from 'react-icons/fa'; /
 
 // Array of counters with labels, end values, and icons
 const counters = [
-  { label: 'Teachers', endValue: 50, suffix: '+', icon: FaUsers },
-  { label: 'Students', endValue: 1000, suffix: '+', icon: FaGraduationCap },
+  { label: 'Teachers', endValue: 25, suffix: '+', icon: FaUsers },
+  { label: 'Students', endValue: 370, suffix: '+', icon: FaGraduationCap },
   { label: 'Results', endValue: 90, suffix: '%', icon: FaChartBar },
-  { label: 'Years of Experience', endValue: 30, suffix: '+', icon: FaBook },
+  { label: 'Years of Experience', endValue: 15, suffix: '+', icon: FaBook },
 ];
 
 // Counter component that increments the number
