@@ -47,7 +47,7 @@ export const login = async (req: any, res: any) => {
       }
     }
   } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error", error });
   }
 
   return res.status(401).json({ message: "Invalid Credentials" });
