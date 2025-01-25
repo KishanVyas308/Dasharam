@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react"
-import { useRecoilState } from "recoil"
+import { useRecoilState, useSetRecoilState } from "recoil"
 import { studentsAtom } from "../../state/studentsAtom"
 import { stdSubAtom } from "../../state/stdSubAtom"
 // import { addStudent, getAllStudents } from "../../backend/handleStudent"
@@ -23,12 +23,13 @@ export default function AddStudent() {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const [students, setStudents] = useRecoilState(studentsAtom)
+  const  setStudents = useSetRecoilState(studentsAtom)
   const [standard, setStandard] = useRecoilState(stdSubAtom)
 
   const getAllStdSub = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`,{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
       if (res.status === 200) {
         setIsLoading(false)
         return res.data

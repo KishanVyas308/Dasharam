@@ -11,7 +11,7 @@ import TestPage from "./pages/Test/TestPage";
 import AttedancePage from "./pages/Attedance/AttedancePage";
 import Sidebar from "./pages/Dashbord/Sidebar";
 import { useState } from "react";
-import { FaBars, FaBook, FaCalendar, FaCalendarAlt, FaChalkboardTeacher, FaClipboardList, FaGlobe, FaSignOutAlt, FaUserCheck, FaUserGraduate } from "react-icons/fa";
+import { FaBars, FaBook, FaChalkboardTeacher, FaClipboardList, FaGlobe, FaSignOutAlt, FaUserCheck, FaUserGraduate } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useRecoilState } from "recoil";
 import { userAtom } from "./state/userAtom";
@@ -30,7 +30,7 @@ export const menuItems = [
   { title: "Manage Tests", icon: FaClipboardList, link: "/manage-test" },
   { title: "Attendance", icon: FaUserCheck, link: "/add-attedance" },
   // { title: "Events", icon: FaCalendarAlt, link: "/events" },
-  { title: "Landing Page", icon: FaGlobe, link: "/manage-landing-page" },
+  { title: "Landing Page", icon: FaGlobe, link: "/manage-landing-page", underDevelopment: true },
   // { title: "Academic Calendar", icon: FaCalendar, link: "/academic-calender" },
 ];
 
@@ -44,8 +44,10 @@ function App() {
 
   const handleLogout = () => {
     Cookies.remove("user");
+    localStorage.removeItem("token");
     setUser(null);
   };
+  
 
   return (
     <div className="">
@@ -63,7 +65,7 @@ function App() {
                 <div className="flex-1 flex flex-col overflow-hidden">
                   {/* Header */}
                   <header className="bg-white shadow-sm">
-                    <div className="max-w-7xl mx-auto sm:py-2 lg:py-4 sm:px-2 lg:px-8 flex justify-between items-center">
+                    <div className="max-w-7xl mx-auto py-2 lg:py-4 px-2 lg:px-8 flex justify-between items-center">
                       <div className="flex items-center">
                         <button
                           onClick={toggleSidebar}

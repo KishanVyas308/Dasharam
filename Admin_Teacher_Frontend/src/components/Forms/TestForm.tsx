@@ -1,10 +1,10 @@
 // src/components/Forms/TestForm.tsx
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { testsState } from '../../state/testsAtom';
+import { teastsAtom } from '../../state/testsAtom';
 
 const TestForm: React.FC = () => {
-  const [tests, setTests] = useRecoilState(testsState);
+  const [tests, setTests] = useRecoilState(teastsAtom);
   const [subject, setSubject] = useState('');
   const [totalMarks, setTotalMarks] = useState('');
   const [collectedMarks, setCollectedMarks] = useState('');

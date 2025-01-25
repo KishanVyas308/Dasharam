@@ -19,7 +19,7 @@ const AdminAuthMiddleware = ({
     const user: any = Cookies.get("user");
     if (user) {
       setUser(JSON.parse(user));
-      if (user.roll == UserRole.Admin) navigate("/");
+      navigate("/");
     }
   }, []);
 
@@ -34,7 +34,6 @@ const AdminAuthMiddleware = ({
       return <Navigate to="/" />;
     }
     else {
-      alert("Login First");
       return <Navigate to="/login" />;
     }
   }

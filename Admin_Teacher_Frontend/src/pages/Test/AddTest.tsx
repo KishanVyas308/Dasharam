@@ -92,7 +92,9 @@ export default function AddTest() {
       totalMarks,
       takenDate: takenDate?.toISOString() || "",
       students: selectedStdStudents
-      })
+      },
+      { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    })
       if (res.data.test) {
       setTests([...tests, res.data.test])
       }

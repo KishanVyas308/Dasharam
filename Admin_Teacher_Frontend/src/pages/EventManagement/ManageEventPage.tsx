@@ -6,8 +6,6 @@ import Loading from '../../components/Loading'
 import { toast } from 'react-toastify'
 import ConformDeletePopUp from '../../components/conformation/ConformDeletePopUp'
 import { FaPlus, FaTrash } from 'react-icons/fa'
-import { useRecoilState } from 'recoil'
-import { stdSubAtom } from '../../state/stdSubAtom'
 
 const ManageEventPage = () => {
     const [name, setName] = useState("")
@@ -33,7 +31,8 @@ const ManageEventPage = () => {
     const fetchEvents = async () => {
         setIsLoading(true)
         try {
-            const res = await axios.get(`${BACKEND_URL}/events/get`)
+            const res = await axios.get(`${BACKEND_URL}/events/get`,{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
             if (res.status === 200) {
                 const sortedEvents = res.data.sort((a: any, b: any) => {
                     return new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -54,7 +53,8 @@ const ManageEventPage = () => {
                     name,
                     date,
                     detail
-                })
+                },{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            })
                 if (res.status === 200) {
                     toast.success(res.data.message)
                     fetchEvents()
@@ -72,7 +72,8 @@ const ManageEventPage = () => {
     const handleDeleteEvent = async (eventId: string) => {
         setIsLoading(true)
         try {
-            const res = await axios.delete(`${BACKEND_URL}/events/${eventId}`)
+            const res = await axios.delete(`${BACKEND_URL}/events/${eventId}`,{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
             if (res.status === 200) {
                 toast.success(res.data.message)
                 fetchEvents()

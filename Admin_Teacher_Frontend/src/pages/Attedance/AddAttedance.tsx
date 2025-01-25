@@ -54,11 +54,10 @@ export default function AddAttendance() {
       try {
 
         const res = await axios.post(`${BACKEND_URL}/attendance/get-for-standard`, {
-
           standardId,
           takenDate: formattedDate
-
-        })
+        } ,{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
         console.log(res.data.data[0].students);
 
         setSelectedStdStudents(res.data.data[0].students)
@@ -232,14 +231,16 @@ export default function AddAttendance() {
                   teacherId: takenByTeacherId,
                   takenDate: formattedDate,
                   students: selectedStdStudents
-                })
+                } ,{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+              })
               } else {
                 res = await axios.post(`${BACKEND_URL}/attendance/add-for-standard`, {
                   standardId,
                   teacherId: takenByTeacherId,
                   takenDate: formattedDate,
                   students: selectedStdStudents
-                })
+                } ,{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+              })
               }
               setIsTakenAttendance(true)
               toast.success(res.data.message)

@@ -39,7 +39,8 @@ const ManageAttendance: React.FC = () => {
 
     const getAllStudents = async () => {
         try {
-            const res = await axios.get(`${BACKEND_URL}/student/all`);
+            const res = await axios.get(`${BACKEND_URL}/student/all`,{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
             if (res.status === 200) {
                 return res.data;
             }
@@ -52,7 +53,8 @@ const ManageAttendance: React.FC = () => {
     async function setUp() {
         setIsLoading(true);
         try {
-            const res = await axios.get(`${BACKEND_URL}/subject-standard/all`);
+            const res = await axios.get(`${BACKEND_URL}/subject-standard/all`,{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
             if (res.data) {
                 setStdSubState(res.data);
             }
@@ -77,7 +79,8 @@ const ManageAttendance: React.FC = () => {
                 standardId: selectedClass,
                 startDate: dateRange[0].toISOString().split('T')[0],
                 endDate: dateRange[1].toISOString().split('T')[0],
-            });
+            },{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
 
             if (res.status === 200) {
                 setAttedanceData(res.data.data);

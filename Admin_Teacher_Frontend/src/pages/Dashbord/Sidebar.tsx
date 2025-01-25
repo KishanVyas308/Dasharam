@@ -32,7 +32,7 @@ const Sidebar = ({isSidebarOpen, toggleSidebar, isHome = false} : {isSidebarOpen
                 ? (item.title === "Manage Tests" ||
                     item.title === "Attendance") &&
                   SidebarComponent({ item, index })
-                : SidebarComponent({ item, index })
+                : SidebarComponent({ item, index})
             )}
           </nav>
         </motion.aside>
@@ -59,9 +59,10 @@ const SidebarComponent = ({ item, index }: dashbardComponentType) => {
         to={item.link}
         className="flex items-center px-6 py-3 text-gray-100 hover:bg-indigo-800 transition-colors duration-200"
       >
-        <item.icon className="w-5 h-5 mr-3" />
+        <item.icon className="w-5 h-5 mr-3 " />
         {item.title}
       </Link>
+       
     </motion.div>
   );
 };
