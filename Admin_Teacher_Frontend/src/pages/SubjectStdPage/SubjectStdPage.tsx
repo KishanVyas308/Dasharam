@@ -36,9 +36,11 @@ export default function SubjectStandardPage() {
     setIsLoading(true)
     try {
       // returns all standards and subjects
-      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      )
       if (res.data) {
-        console.log(res.data);
         
       setStdSubState(res.data)
       }
@@ -50,10 +52,12 @@ export default function SubjectStandardPage() {
 
     try {
       // returns all teachers
-      const res = await axios.get(`${BACKEND_URL}/teacher/all`)
+      const res = await axios.get(`${BACKEND_URL}/teacher/all`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      )
       if (res.data) {
       setTeachers(res.data)
-      console.log(res.data);
       }
     } catch (error: any) {
       toast.error(error.response.data.message)
@@ -68,7 +72,8 @@ export default function SubjectStandardPage() {
       // add a new standard
       setIsLoading(true)
       try {
-        const res = await axios.post(`${BACKEND_URL}/subject-standard/add`, { name: addStdText.trim() })
+        const res = await axios.post(`${BACKEND_URL}/subject-standard/add`, { name: addStdText.trim() } ,{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
         // const success = await addStandard(addStdText)
         if(res.status === 200){
           toast.success(res.data.message)
@@ -85,7 +90,8 @@ export default function SubjectStandardPage() {
     if (editStdName.trim()) {
       setIsLoading(true)
       try {
-        const res = await axios.put(`${BACKEND_URL}/subject-standard/update-name/${standardId}`, { newName: editStdName.trim() })
+        const res = await axios.put(`${BACKEND_URL}/subject-standard/update-name/${standardId}`, { newName: editStdName.trim() },{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
         if (res.status === 200) {
           toast.success(res.data.message)
           setEditStdName('')
@@ -102,7 +108,8 @@ export default function SubjectStandardPage() {
   async function handleDeleteStandard(standardId: string) {
     setIsLoading(true)
     try {
-      const res = await axios.delete(`${BACKEND_URL}/subject-standard/delete/${standardId}`)
+      const res = await axios.delete(`${BACKEND_URL}/subject-standard/delete/${standardId}`,{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    })
       if (res.status === 200) {
         toast.success(res.data.message)
         setUp()
@@ -115,10 +122,12 @@ export default function SubjectStandardPage() {
 
   async function handleAddStandardSubjects(standardId: string) {
     if (addSubjTexts[standardId]?.trim()) {
-      const newSubjects = addSubjTexts[standardId].split(',').map((name: string) => ({ name: name.trim() }))
+      const newSubjects = addSubjTexts[standardId].split(',').map((name: string) => ({ 
+      name: name.trim() }))
       setIsLoading(true)
       try {
-        const res = await axios.post(`${BACKEND_URL}/subject-standard/add-subjects`, {standardId :  standardId , newSubjects: newSubjects })
+        const res = await axios.post(`${BACKEND_URL}/subject-standard/add-subjects`, {standardId :  standardId , newSubjects: newSubjects },{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
         if (res.status === 200) {
           toast.success(res.data.message)
           setAddSubjTexts((prev: any) => ({ ...prev, [standardId]: '' }))
@@ -136,7 +145,8 @@ export default function SubjectStandardPage() {
     try {
       const res = await axios.put(`${BACKEND_URL}/subject-standard/remove-subject`, {
        standardId: standardId, subjectName : subjectName 
-      })
+      },{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    })
       if (res.status === 200) {
         toast.success(res.data.message)
         setUp()
@@ -152,7 +162,8 @@ export default function SubjectStandardPage() {
     try {
       const res = await axios.put(`${BACKEND_URL}/subject-standard/std/sub/remove-teacher`, {
         standardId: standardId, subjectName: subjectName, teacherId: teacherId
-      })
+      },{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    })
       if (res.status === 200) {
         setIsConformDelete(false)
         toast.success(res.data.message)

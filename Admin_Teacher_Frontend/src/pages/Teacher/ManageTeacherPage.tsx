@@ -21,7 +21,10 @@ export default function ManageTeacherPage() {
 
   const getAllTeachers = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/teacher/all`)
+      const res = await axios.get(`${BACKEND_URL}/teacher/all`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      )
       if (res.status === 200) {
         setIsLoading(false)
         return res.data
@@ -37,7 +40,10 @@ export default function ManageTeacherPage() {
 
   const getAllStdSub = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      )
       if (res.status === 200) {
         setIsLoading(false)
         return res.data

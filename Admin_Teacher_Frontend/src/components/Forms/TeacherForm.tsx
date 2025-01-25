@@ -1,10 +1,10 @@
 // src/components/Forms/TeacherForm.tsx
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { teachersState } from '../../state/teachersAtom';
+import { teachersAtom } from '../../state/teachersAtom';
 
 const TeacherForm: React.FC = () => {
-  const [teachers, setTeachers] = useRecoilState(teachersState);
+  const [teachers, setTeachers] = useRecoilState(teachersAtom);
   const [name, setName] = useState('');
   const [standard, setStandard] = useState('');
   const [subject, setSubject] = useState('');
@@ -14,7 +14,6 @@ const TeacherForm: React.FC = () => {
     e.preventDefault();
     const newTeacher = { id: "id",  name, standard ,subject, contact };
     setTeachers([...teachers, newTeacher]);
-    // Add logic to save the teacher to Firebase
   };
 
   return (

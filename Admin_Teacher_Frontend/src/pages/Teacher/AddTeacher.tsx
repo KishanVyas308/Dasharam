@@ -40,7 +40,9 @@ const AddTeacher = () => {
           mobileNo,
           grNo,
           password
-        })
+        },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
         if (res.status === 200) {
           toast.success(res.data.message)
           const updatedTeachers = await getAllTeachers()
@@ -63,7 +65,10 @@ const AddTeacher = () => {
 
   const getAllTeachers = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/teacher/all`)
+      const res = await axios.get(`${BACKEND_URL}/teacher/all`, 
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      )
       if (res.status === 200) {
         return res.data
 
@@ -79,7 +84,10 @@ const AddTeacher = () => {
   const handleDeleteTeacher = async (teacherId: string) => {
     setIsLoading(true)
     try {
-      const res = await axios.delete(`${BACKEND_URL}/teacher/delete/${teacherId}`)
+      const res = await axios.delete(`${BACKEND_URL}/teacher/delete/${teacherId}`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      )
       if (res.status === 200) {
       toast.success(res.data.message)
       setIsConformDelete(false)

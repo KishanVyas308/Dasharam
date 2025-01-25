@@ -58,6 +58,9 @@ export default function Login() {
       Cookies.set('user', JSON.stringify(admin), { expires: 0.25 }) // 6 hours
       setCurrentAdmin(admin)
       setIsSuccess(true)
+      console.log(admin)
+      localStorage.setItem('token', admin.token)
+      console.log(localStorage.getItem('token'))
       setTimeout(() => {
         navigate('/')
       }, 3000)
@@ -70,6 +73,7 @@ export default function Login() {
   }
 
   useEffect(() => {
+    
     if (isSuccess) {
       const timer = setTimeout(() => {
         navigate('/')

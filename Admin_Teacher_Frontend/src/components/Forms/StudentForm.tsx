@@ -1,11 +1,11 @@
 // src/components/Forms/StudentForm.tsx
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { studentsState } from '../../state/studentsAtom';
+import { studentsAtom } from '../../state/studentsAtom';
 import { Student } from '../../types/type';
 
 const StudentForm: React.FC = () => {
-  const [students, setStudents] = useRecoilState<Student[]>(studentsState);
+  const [students, setStudents] = useRecoilState<Student[]>(studentsAtom);
   const [name, setName] = useState('');
   const [standard, setStandard] = useState('');
   const [parentName, setParentName] = useState('');

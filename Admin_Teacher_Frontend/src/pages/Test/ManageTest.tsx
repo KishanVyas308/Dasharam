@@ -78,7 +78,10 @@ export default function ManageTest() {
 
   const getAllTeachers = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/teacher/all`)
+      const res = await axios.get(`${BACKEND_URL}/teacher/all`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      )
       if (res.status === 200) {
         return res.data
       }
@@ -90,7 +93,10 @@ export default function ManageTest() {
 
   const getAllStdSub = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      )
       if (res.status === 200) {
         setIsLoading(false)
         return res.data
@@ -105,7 +111,10 @@ export default function ManageTest() {
 
   const getAllStudents = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/student/all`)
+      const res = await axios.get(`${BACKEND_URL}/student/all`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      )
       if (res.status === 200) {
         return res.data
       }
@@ -117,7 +126,10 @@ export default function ManageTest() {
 
   const getAllTests = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/test/all`)
+      const res = await axios.get(`${BACKEND_URL}/test/all`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      )
       if (res.status === 200) {
         return res.data
       }

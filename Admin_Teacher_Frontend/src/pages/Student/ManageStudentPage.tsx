@@ -25,7 +25,10 @@ export default function ManageStudentPage() {
 
   const getAllStudents = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/student/all`)
+      const res = await axios.get(`${BACKEND_URL}/student/all`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      )
       console.log("students", res.data);
 
       if (res.status === 200) {
@@ -40,7 +43,11 @@ export default function ManageStudentPage() {
 
   const getAllStdSub = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+
+      )
       if (res.status === 200) {
 
         return res.data

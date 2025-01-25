@@ -28,7 +28,8 @@ export default function AddStudent() {
 
   const getAllStdSub = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`)
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`,{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
       if (res.status === 200) {
         setIsLoading(false)
         return res.data

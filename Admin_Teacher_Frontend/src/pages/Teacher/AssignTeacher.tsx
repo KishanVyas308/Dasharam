@@ -33,7 +33,9 @@ const AssignTeacher = () => {
           standardId,
           subjectName,
           teacherId
-        })
+        },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
 
         if (res.status === 200) {
           toast.success(res.data.message)
@@ -54,7 +56,9 @@ const AssignTeacher = () => {
         const res = await axios.post(`${BACKEND_URL}/subject-standard/assign-class-teacher`, {
           standardId: standardIdCT,
           teacherId: teacherIdCT
-        })
+        },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
 
         if (res.status === 200) {
           toast.success(res.data.message)
