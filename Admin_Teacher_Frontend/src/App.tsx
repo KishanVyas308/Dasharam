@@ -11,7 +11,7 @@ import TestPage from "./pages/Test/TestPage";
 import AttedancePage from "./pages/Attedance/AttedancePage";
 import Sidebar from "./pages/Dashbord/Sidebar";
 import { useState } from "react";
-import { FaBars, FaBook, FaCalendar, FaCalendarAlt, FaChalkboardTeacher, FaClipboardList, FaGlobe, FaSignOutAlt, FaUserCheck, FaUserGraduate } from "react-icons/fa";
+import { FaBars, FaBook, FaChalkboardTeacher, FaClipboardList, FaGlobe, FaSignOutAlt, FaUserCheck, FaUserGraduate } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useRecoilState } from "recoil";
 import { userAtom } from "./state/userAtom";

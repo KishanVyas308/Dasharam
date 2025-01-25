@@ -6,8 +6,6 @@ import Loading from '../../components/Loading'
 import { toast } from 'react-toastify'
 import ConformDeletePopUp from '../../components/conformation/ConformDeletePopUp'
 import { FaPlus, FaTrash } from 'react-icons/fa'
-import { useRecoilState } from 'recoil'
-import { stdSubAtom } from '../../state/stdSubAtom'
 
 const ManageEventPage = () => {
     const [name, setName] = useState("")

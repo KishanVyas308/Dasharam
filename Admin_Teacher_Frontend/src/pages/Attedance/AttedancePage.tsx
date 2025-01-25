@@ -1,17 +1,9 @@
 import { JSXElementConstructor, ReactElement, ReactNode, useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { teachersAtom } from "../../state/teachersAtom";
 import { stdSubAtom } from "../../state/stdSubAtom";
 import { studentsAtom } from "../../state/studentsAtom";
-import { userAtom } from "../../state/userAtom";
 import AddAttendance from "./AddAttedance";
-import {
-  FaChalkboardTeacher,
-  FaUserGraduate,
-  FaBook,
-  FaClipboardList,
-  FaUserCheck,
-} from "react-icons/fa";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { BACKEND_URL } from "../../config";
@@ -72,18 +64,6 @@ export default function AttendancePage() {
     }
   }, []);
 
-  const handleLogout = () => {
-    Cookies.remove("user");
-    toast.success("User logged out successfully");
-  };
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen);
-  };
-
-  const toggleProfileDropdown = () => {
-    setProfileDropdownOpen(!isProfileDropdownOpen);
-  };
 
   return (
  
