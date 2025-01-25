@@ -1,5 +1,6 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
+import jwt from "jsonwebtoken";
 
 export const login = async (req: any, res: any) => {
   try {
@@ -13,8 +14,13 @@ export const login = async (req: any, res: any) => {
 
       if (adminData.password === password) {
         //? ADMIN LOGIN
+        //  generate token from adminData
+        const token = jwt.sign({ ...adminData, id: adminDoc.id
+        }, process.env.JWT_SECRET as string, { 
+          expiresIn: "1h",
+        });
         return res.status(200).json({
-          data: { ...adminData, id: adminDoc.id },
+          data: { ...adminData, id: adminDoc.id, token },
           message: "Admin Login Successfull",
         });
       }
@@ -28,9 +34,14 @@ export const login = async (req: any, res: any) => {
       const teacherData = teacherDoc.data();
 
       if (teacherData.password === password) {
+        //  generate token from adminData
+        const token = jwt.sign({ ...teacherData, id: teacherDoc.id
+        }, process.env.JWT_SECRET as string, { 
+          expiresIn: "1h",
+        });
         //? TEACHER LOGIN
         return res.status(200).json({
-          data: { ...teacherData, id: teacherDoc.id },
+          data: { ...teacherData, id: teacherDoc.id, token },
           message: "Teacher Login Successfull",
         });
       }

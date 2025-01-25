@@ -10,10 +10,9 @@ import teacherRoute from './routes/teacherRoute'
 import testRoute from './routes/testRoute'
 import subjectStandardRoute from './routes/subjectStandardRoute'
 import notfy from './routes/notfyRoute'
-import events from './routes/eventsRoute'
 
 //? middleware import
-import { authRateLimiter } from './middleware/midlleware';
+import { authRateLimiter, verifyToken } from './middleware/midlleware';
 
 
 
@@ -28,13 +27,13 @@ const api = "/api/v1/free";
 
 // Apply rate limiter to auth routes
 app.use(`${api}/auth`, authRateLimiter, authRoute);
-app.use(`${api}/attendance`, attendanceRoute);
-app.use(`${api}/student`, studentRoute);
-app.use(`${api}/teacher`, teacherRoute);
-app.use(`${api}/test`, testRoute);
-app.use(`${api}/subject-standard`, subjectStandardRoute);
-app.use(`${api}/notfy`,  notfy);
-app.use(`${api}/events`,  events);
+app.use(`${api}/attendance`, verifyToken, attendanceRoute);
+app.use(`${api}/student`,verifyToken, studentRoute);
+app.use(`${api}/teacher`, verifyToken, teacherRoute);
+app.use(`${api}/test`, testRoute); // use in app
+app.use(`${api}/subject-standard`, subjectStandardRoute); // use in app
+app.use(`${api}/notfy`,  notfy); // use in app
+
 
 
 app.listen(PORT, () => {
