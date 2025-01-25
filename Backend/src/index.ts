@@ -12,7 +12,7 @@ import subjectStandardRoute from './routes/subjectStandardRoute'
 import notfy from './routes/notfyRoute'
 
 //? middleware import
-import { authRateLimiter, verifyToken } from './middleware/midlleware';
+import {  verifyToken } from './middleware/midlleware';
 
 
 
@@ -26,7 +26,7 @@ app.use(cors());
 const api = "/api/v1/free";
 
 // Apply rate limiter to auth routes
-app.use(`${api}/auth`, authRateLimiter, authRoute);
+app.use(`${api}/auth`, authRoute);
 app.use(`${api}/attendance`, verifyToken, attendanceRoute);
 app.use(`${api}/student`,verifyToken, studentRoute);
 app.use(`${api}/teacher`, verifyToken, teacherRoute);
