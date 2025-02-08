@@ -21,7 +21,9 @@ const PORT = 3000;
 dotenv.config();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'https://dasaram-admin.pages.dev'
+}));
 
 const api = "/api/v1/free";
 
