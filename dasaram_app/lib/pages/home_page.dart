@@ -55,7 +55,8 @@ class _MainPageState extends State<MainPage>
     _initAnimation();
   }
 
-  static final backendUrl = 'https://test-demo-7n6y.onrender.com/api/v1/free';
+  static final backendUrl =
+      'https://dasharam-git-main-kishan-vyas-projects.vercel.app/api/v1/free';
   bool isLoading = false;
 
   Future<void> _sendTokenAndStandardId(String token, String stdId) async {
