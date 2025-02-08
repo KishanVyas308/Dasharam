@@ -18,6 +18,7 @@ const corsOptions = {
     origin: 'https://dasaram-admin.pages.dev', // Allow this origin
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+    credentials: true, // Allow credentials
 };
 
 
@@ -29,6 +30,15 @@ app.use(express.json());
 app.use(cors(corsOptions));
 // This is needed for preflight requests (OPTIONS requests)
 app.options('*', cors(corsOptions));
+
+// Add headers to the response
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://dasaram-admin.pages.dev');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    next();
+});
 
 const api = "/api/v1/free";
 
