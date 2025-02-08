@@ -14,6 +14,11 @@ import notfy from './routes/notfyRoute'
 //? middleware import
 import {  verifyToken } from './middleware/midlleware';
 
+const corsOptions = {
+    origin: 'https://dasaram-admin.pages.dev', // Allow this origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+};
 
 
 const app = express();
@@ -21,9 +26,7 @@ const PORT = 3000;
 dotenv.config();
 
 app.use(express.json());
-app.use(cors({
-    origin: 'https://dasaram-admin.pages.dev'
-}));
+app.use(cors(corsOptions));
 
 const api = "/api/v1/free";
 
