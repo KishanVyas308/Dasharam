@@ -28,7 +28,8 @@ class _LoginPageState extends State<LoginPage> {
     ));
   }
 
-  static final backendUrl = 'https://test-demo-7n6y.onrender.com/api/v1/free';
+  static final backendUrl =
+      'https://dasharam-git-main-kishan-vyas-projects.vercel.app/api/v1/free';
 
   final TextEditingController grNoController = TextEditingController();
   bool isLoading = false;
