@@ -21,7 +21,6 @@ const corsOptions = {
     credentials: true, // Allow credentials
 };
 
-    
 const app = express();
 const PORT = 3000;
 dotenv.config();
