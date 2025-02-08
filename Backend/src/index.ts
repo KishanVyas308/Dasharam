@@ -15,7 +15,7 @@ import notfy from './routes/notfyRoute'
 import {  verifyToken } from './middleware/midlleware';
 
 const corsOptions = {
-    origin: 'https://dasaram-admin.pages.dev', // Allow this origin
+    origin: '*', // Allow this origin
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
     credentials: true, // Allow credentials
@@ -33,7 +33,7 @@ app.options('*', cors(corsOptions));
 
 // Add headers to the response
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://dasaram-admin.pages.dev');
+    res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Credentials', 'true');
