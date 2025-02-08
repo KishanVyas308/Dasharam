@@ -27,6 +27,8 @@ dotenv.config();
 
 app.use(express.json());
 app.use(cors(corsOptions));
+// This is needed for preflight requests (OPTIONS requests)
+app.options('*', cors(corsOptions));
 
 const api = "/api/v1/free";
 
