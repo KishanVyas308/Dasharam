@@ -16,12 +16,12 @@ import {  verifyToken } from './middleware/midlleware';
 
 const corsOptions = {
     origin: '*', // Allow this origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
     credentials: true, // Allow credentials
 };
 
-
+    
 const app = express();
 const PORT = 3000;
 dotenv.config();
