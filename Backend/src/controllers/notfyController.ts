@@ -93,7 +93,6 @@ async function sendNotificationToTokens(
 
   try {
     const response = await messaging.sendEachForMulticast(message);
-    console.log("Successfully sent message:", response);
   } catch (error) {
     console.error("Error sending message:", error);
   }

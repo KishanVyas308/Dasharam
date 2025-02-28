@@ -97,7 +97,6 @@ export async function updateAttendance(
 }
 
 export async function getAttedanceFromSelectedDate(standardId: string, startDate: string, endDate: string) {
-  console.log( standardId, startDate, endDate);
   if (!standardId || !startDate || !endDate) {
     
     throw new Error("Invalid input parameters");
@@ -114,14 +113,12 @@ export async function getAttedanceFromSelectedDate(standardId: string, startDate
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
       const attendanceData = querySnapshot.docs.map((doc) => doc.data());
-      console.log('Attendance found', attendanceData);
       
       return {
         data: attendanceData,
         isAttendanceFound: true,
       };
     } else {
-      console.log('No attendance found');
       
       return {
         data: [],

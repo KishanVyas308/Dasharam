@@ -63,7 +63,6 @@ export const loginStundent = async (req: any, res: any) => {
     if (!querySnapshot.empty) {
       const studentDoc = querySnapshot.docs[0];
       const studentData = studentDoc.data();
-      console.log(studentData);
       
       return res.status(200).json({
         data: { ...studentData, id: studentDoc.id },

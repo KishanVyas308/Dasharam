@@ -56,7 +56,6 @@ export async function getStudentIdsFromTest(testId: string) {
             const testData = docSnap.data();
             return testData.students.map((student: { studentId: string }) => student.studentId);
         } else {
-            console.log("No such test");
             return [];
         }
     } catch (error) {
@@ -128,9 +127,7 @@ export async function getAllTestsByStandard(standardId: string) {
 export async function getAllTestsByStandardEndpoint(req: any, res: any) {
     const { standardId } = req.params;
     try {
-        console.log("standardId test", standardId);
         const tests = await getAllTestsByStandard(standardId);
-        console.log("tests test", tests);
         
         res.status(200).send(tests);
     } catch (error) {
