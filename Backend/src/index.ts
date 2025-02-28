@@ -14,14 +14,30 @@ import notfy from './routes/notfyRoute'
 //? middleware import
 import {  verifyToken } from './middleware/midlleware';
 
-
+const corsOptions = {
+    origin: '*', // Allow this origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+    credentials: true, // Allow credentials
+};
 
 const app = express();
 const PORT = 3000;
 dotenv.config();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
+// This is needed for preflight requests (OPTIONS requests)
+app.options('*', cors(corsOptions));
+
+// Add headers to the response
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    next();
+});
 
 const api = "/api/v1/free";
 

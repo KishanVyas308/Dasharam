@@ -316,12 +316,10 @@ export async function addSubjectsInStandardEndpoint(req: Request, res: Response)
 export async function getStandardByIdEndpoint(req: Request, res: Response) {
     const { standardId } = req.params;
     try {
-        console.log("standardId", standardId);
         
         const result = await getStandardById(standardId);
         if (result) {
             res.status(200).send(result);
-            console.log("result", result);
             
         } else {
             res.status(404).send({ message: 'Standard does not exist' });

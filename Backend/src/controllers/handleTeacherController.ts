@@ -54,7 +54,6 @@ export async function getTeacherById(teacherId: string) {
     if (docSnap.exists()) {
       return { id: docSnap.id, ...docSnap.data() };
     } else {
-      console.error("Teacher does not exist");
       return null;
     }
   } catch (error) {
