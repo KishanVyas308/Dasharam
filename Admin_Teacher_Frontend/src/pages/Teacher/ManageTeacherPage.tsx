@@ -198,15 +198,15 @@ export default function ManageTeacherPage() {
         transition={{ duration: 0.3 }}
         className="max-w-7xl mx-auto"
       >
-        <header className="bg-white shadow-md rounded-lg px-6 py-5 mb-8 border-l-4 border-indigo-600">
-          <div className="flex items-center">
-            <FaChalkboardTeacher className="text-3xl text-indigo-600 mr-4" />
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Teacher Management</h1>
-              <p className="text-gray-600 mt-1">Add new teachers and assign them to classes</p>
+          <header className="bg-white shadow-md rounded-lg px-6 py-5 mb-8 border-l-4 border-indigo-600">
+            <div className="flex items-center">
+              <FaChalkboardTeacher className="text-3xl text-indigo-600 mr-4" />
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Teacher Management</h1>
+                <p className="text-gray-600 mt-1">Add new teachers and assign them to classes</p>
+              </div>
             </div>
-          </div>
-        </header>
+          </header>
 
         <div className="space-y-8">
           <motion.div
