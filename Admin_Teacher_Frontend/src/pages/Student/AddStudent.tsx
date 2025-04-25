@@ -18,17 +18,18 @@ export default function AddStudent() {
   const [parentName, setParentName] = useState("")
   const [parentMobileNo, setParentMobileNo] = useState("")
   const [grNo, setGrNo] = useState("")
- 
+
   const [standardId, setStandardId] = useState("")
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const  setStudents = useSetRecoilState(studentsAtom)
+  const [students, setStudents] = useRecoilState(studentsAtom)
   const [standard, setStandard] = useRecoilState(stdSubAtom)
 
   const getAllStdSub = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`,{ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      const res = await axios.get(`${BACKEND_URL}/subject-standard/all`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       })
       if (res.status === 200) {
         setIsLoading(false)
@@ -55,11 +56,12 @@ export default function AddStudent() {
     fetchStandardsSub()
   }, [standard])
 
-  const getAllStudents= async () => {
+  const getAllStudents = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/student/all`)
-      console.log("students", res.data);  
-      
+      const res = await axios.get(`${BACKEND_URL}/student/all`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      )
+
       if (res.status === 200) {
         return res.data
       }
@@ -71,34 +73,58 @@ export default function AddStudent() {
   }
 
   const handleAddStudent = async () => {
-
-    if (name && parentName && parentMobileNo && grNo && standardId) {
-      setIsLoading(true)
-
-      try {
-        const res = await axios.post(`${BACKEND_URL}/student/add`, {
-          name,
-          parentName,
-          parentMobileNo,
-          grno: grNo,
-          standardId
-        })
-        toast.success(res.data.message)
-      } catch (error: any) {
-        setIsLoading(false)
-        toast.error("Failed to add student")
-        return
-        
-      }
-      const updatedStudents = await getAllStudents()
-      setStudents(updatedStudents)
-      setName("")
-      setParentName("")
-      setParentMobileNo("")
-      setGrNo("")
-     
-      setStandardId("")
+    if (!name.trim()) {
+      toast.error("Student name is required")
+      return
     }
+    if (!parentName.trim()) {
+      toast.error("Parent name is required")
+      return
+    }
+    if (!parentMobileNo.trim() || !/^\d{10}$/.test(parentMobileNo)) {
+      toast.error("Valid parent mobile number is required")
+      return
+    }
+    if (!grNo.trim()) {
+      toast.error("GR Number is required")
+      return
+    }
+    // add validation for grno if exists in the database
+    if (students.some((student: any) => student.grno === grNo)) {
+      toast.error("GR Number already exists")
+      return
+    }
+    if (!standardId) {
+      toast.error("Please select a standard/class")
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const res = await axios.post(`${BACKEND_URL}/student/add`, {
+        name,
+        parentName,
+        parentMobileNo,
+        grno: grNo,
+        standardId
+      }, 
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      )
+      toast.success(res.data.message)
+    } catch (error: any) {
+      setIsLoading(false)
+      toast.error("Failed to add student")
+      return
+    }
+
+    const updatedStudents = await getAllStudents()
+    setStudents(updatedStudents)
+    setName("")
+    setParentName("")
+    setParentMobileNo("")
+    setGrNo("")
+    setStandardId("")
     setIsLoading(false)
   }
 
@@ -106,86 +132,102 @@ export default function AddStudent() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white p-6 rounded-lg shadow-md"
+      transition={{ duration: 0.3 }}
+      className="bg-white p-8 rounded-xl shadow-lg border border-gray-100"
     >
-      {
-        isLoading  && <Loading />
-      }
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-        <FaUserPlus className="mr-2" />
-        Add Student
+      {isLoading && <Loading />}
+      
+      <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center">
+        <FaUserPlus className="mr-3 text-indigo-600" />
+        Add New Student
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Student Name</label>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label htmlFor="name" className="block text-sm font-semibold text-gray-700">Student Name</label>
           <input
             id="name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Enter student's full name"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
             required
           />
         </div>
-        <div>
-          <label htmlFor="parentName" className="block text-sm font-medium text-gray-700 mb-1">Parent Name</label>
+        
+        <div className="space-y-2">
+          <label htmlFor="parentName" className="block text-sm font-semibold text-gray-700">Parent Name</label>
           <input
             id="parentName"
             type="text"
             value={parentName}
             onChange={(e) => setParentName(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Enter parent's full name"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
             required
           />
         </div>
-        <div>
-          <label htmlFor="parentMobileNo" className="block text-sm font-medium text-gray-700 mb-1">Parent Mobile No.</label>
+        
+        <div className="space-y-2">
+          <label htmlFor="parentMobileNo" className="block text-sm font-semibold text-gray-700">Parent Mobile Number</label>
           <input
             id="parentMobileNo"
-            type="text"
+            type="tel"
             value={parentMobileNo}
             onChange={(e) => setParentMobileNo(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Enter parent's contact number"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
             required
           />
         </div>
-        <div>
-          <label htmlFor="grNo" className="block text-sm font-medium text-gray-700 mb-1">GR No.</label>
+        
+        <div className="space-y-2">
+          <label htmlFor="grNo" className="block text-sm font-semibold text-gray-700">GR Number</label>
           <input
             id="grNo"
             type="text"
             value={grNo}
             onChange={(e) => setGrNo(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Enter general register number"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
             required
           />
         </div>
-        
-        <div>
-          <label htmlFor="standard" className="block text-sm font-medium text-gray-700 mb-1">Select Standard</label>
+
+        <div className="space-y-2 md:col-span-2">
+          <label htmlFor="standard" className="block text-sm font-semibold text-gray-700">Standard/Class</label>
           <select
             id="standard"
             value={standardId}
             onChange={(e) => setStandardId(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none bg-white transition-all"
             required
           >
-            <option value="">Select Standard</option>
+            <option value="">Select a standard</option>
             {standard.map((std: any) => (
               <option key={std.id} value={std.id}>{std.standard}</option>
             ))}
           </select>
         </div>
       </div>
-      <div className="mt-6">
+      
+      <motion.div 
+        className="mt-8"
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.98 }}
+      >
         <button
           onClick={handleAddStudent}
-          className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-200 flex items-center justify-center"
+          disabled={isLoading}
+          className="w-full px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all shadow-md"
         >
-          <FaUserPlus className="mr-2" />
-          Add Student
+          <div className="flex items-center justify-center">
+            <FaUserPlus className="mr-2" />
+            {isLoading ? "Processing..." : "Add Student"}
+          </div>
         </button>
-      </div>
+      </motion.div>
     </motion.div>
   )
 }

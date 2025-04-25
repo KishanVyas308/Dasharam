@@ -57,54 +57,65 @@ function App() {
           <Route
             path="*"
             element={
-              <div className="flex h-screen bg-gray-100">
+              <div className="flex h-screen ">
                 {/* Sidebar */}
                 <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
                 {/* Main Content */}
                 <div className="flex-1 flex flex-col overflow-hidden">
                   {/* Header */}
-                  <header className="bg-white shadow-sm">
-                    <div className="max-w-7xl mx-auto py-2 lg:py-4 px-2 lg:px-8 flex justify-between items-center">
+                  <header className="bg-white border-b border-gray-200 z-10">
+                    <div className="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
                       <div className="flex items-center">
                         <button
                           onClick={toggleSidebar}
-                          className="md:hidden mr-4 text-gray-600 hover:text-gray-900"
+                          className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
+                          aria-label="Toggle sidebar"
                         >
-                          <FaBars size={24} />
+                          <FaBars size={20} />
                         </button>
-                        <h2 className="text-2xl font-semibold text-gray-800">
+                        <h2 className="ml-2 md:ml-0 text-xl font-semibold text-gray-800">
                           Dashboard
                         </h2>
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="relative group">
-                          <div className="flex items-center space-x-2 cursor-pointer">
-                            <img
-                              src="https://th.bing.com/th/id/OIP.n0waXJvNzJqj3wmDBfS1ZwHaHa?w=165&h=180&c=7&r=0&o=5&dpr=2&pid=1.7"
-                              alt="User Avatar"
-                              className="rounded-full w-10 h-10"
-                            />
-                            <span className="text-gray-800 font-medium">
-                              {user?.name || "User"}
-                            </span>
-                          </div>
-                          <div className="absolute right-0 w-48  py-2 bg-white rounded-md shadow-xl z-20 hidden group-hover:block">
-                            <button
-                              onClick={handleLogout}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-500 hover:text-white w-full text-left"
-                            >
-                              <FaSignOutAlt className="inline-block mr-2" /> Logout
-                            </button>
-                          </div>
+                      <div className="flex items-center">
+                        <div className="relative">
+                          <button className="flex items-center space-x-3 focus:outline-none" aria-label="User menu">
+                            <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                              <img
+                                src="https://th.bing.com/th/id/OIP.n0waXJvNzJqj3wmDBfS1ZwHaHa?w=165&h=180&c=7&r=0&o=5&dpr=2&pid=1.7"
+                                alt="User Avatar"
+                                className="rounded-full w-8 h-8 object-cover ring-2 ring-indigo-100"
+                              />
+                              <span className="text-gray-700 font-medium hidden sm:inline-block">
+                                {user?.name || "User"}
+                              </span>
+                              <div className="group relative">
+                                <div className="absolute right-0 w-56 mt-2 top-full origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                  <div className="px-4 py-3">
+                                    <p className="text-sm">Signed in as</p>
+                                    <p className="text-sm font-medium text-gray-900 truncate">{user?.email || "user@example.com"}</p>
+                                  </div>
+                                  <div className="py-1">
+                                    <button
+                                      onClick={handleLogout}
+                                      className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-500 hover:text-white transition-colors"
+                                    >
+                                      <FaSignOutAlt className="mr-2 h-4 w-4" /> Sign out
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </button>
                         </div>
                       </div>
                     </div>
                   </header>
 
                   {/* Routes */}
-                  <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                  <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100/35">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                       <Routes>
                         <Route
                           path="/"
