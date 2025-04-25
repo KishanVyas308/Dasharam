@@ -12,6 +12,7 @@ import axios from 'axios'
 import { BACKEND_URL } from '../../config'
 import { toast } from 'react-toastify'
 import Loading from '../../components/Loading'
+import { FaChalkboardTeacher } from 'react-icons/fa'
 
 export default function ManageStudentPage() {
   const [students, setStudents] = useRecoilState<any>(studentsAtom)
@@ -49,7 +50,6 @@ export default function ManageStudentPage() {
 
       )
       if (res.status === 200) {
-
         return res.data
       }
     } catch (error: any) {
@@ -60,61 +60,77 @@ export default function ManageStudentPage() {
 
   }
 
-  useEffect(() => {
-    async function fetchData() {
-      if (students.length === 0) {
-        setIsLoading(true)
-        const studentsData = await getAllStudents()
-        setIsLoading(false)
-        setStudents(studentsData)
-      }
-      if (subjects.length === 0) {
-        setIsLoading(true)
-        const subjectsData = await getAllStdSub()
-        setIsLoading(false)
-        setSubjects(subjectsData)
-      }
+  async function fetchData() {
+    if (students.length === 0) {
+      setIsLoading(true)
+      const studentsData = await getAllStudents()
+      setIsLoading(false)
+      setStudents(studentsData)
     }
+    if (subjects.length === 0) {
+      setIsLoading(true)
+      const subjectsData = await getAllStdSub()
+      setIsLoading(false)
+      setSubjects(subjectsData)
+    }
+  console.log("students", students);
+    
+  }
+  useEffect(() => {
     fetchData()
-  }, [students, subjects, setStudents, setSubjects])
+    console.log("token", localStorage.getItem('token'));
+    
+  }, [])
 
 
   return (
-    <div>
+    <div className="min-h-screen ">
       {isLoading && <Loading />}
-     
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">    
-
-
-        {/* Page Content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="mb-6">
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => setActiveTab('add')}
-                  className={`px-4 py-2 rounded-md ${activeTab === 'add'
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-white text-indigo-600 hover:bg-indigo-50'
-                    }`}
-                >
-                  Add Student
-                </button>
-                <button
-                  onClick={() => setActiveTab('manage')}
-                  className={`px-4 py-2 rounded-md ${activeTab === 'manage'
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-white text-indigo-600 hover:bg-indigo-50'
-                    }`}
-                >
-                  Manage Students
-                </button>
+      
+      <div className="flex flex-col overflow-hidden">
+        <header className="bg-white shadow-md rounded-lg px-6 py-5 mb-8 border-l-4 border-indigo-600">
+              <div className="flex items-center">
+                <FaChalkboardTeacher className="text-3xl text-indigo-600 mr-4" />
+                <div>
+            <h1 className="text-2xl font-bold text-gray-900">Student Management</h1>
+            <p className="text-gray-600 mt-1">Add new students and manage their details</p>
+                </div>
               </div>
-            </div>
-            {activeTab === 'add' ? <AddStudent /> : <ManageStudent />}
+                  </header>
+      <main className="flex-1 overflow-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="bg-white shadow-sm rounded-xl overflow-hidden mb-8">
+          <div className="border-b border-gray-200">
+          <nav className="flex space-x-2 p-4" aria-label="Tabs">
+            <button
+            onClick={() => setActiveTab('add')}
+            className={`px-4 py-2.5 text-sm font-medium rounded-md transition-all duration-200 ${
+              activeTab === 'add'
+              ? 'bg-indigo-600 text-white shadow-md'
+              : 'text-gray-700 hover:bg-gray-100'
+            }`}
+            >
+            Add Student
+            </button>
+            <button
+            onClick={() => setActiveTab('manage')}
+            className={`px-4 py-2.5 text-sm font-medium rounded-md transition-all duration-200 ${
+              activeTab === 'manage'
+              ? 'bg-indigo-600 text-white shadow-md'
+              : 'text-gray-700 hover:bg-gray-100'
+            }`}
+            >
+            Manage Students
+            </button>
+          </nav>
           </div>
-        </main>
+          
+          <div className="p-6">
+          {activeTab === 'add' ? <AddStudent /> : <ManageStudent />}
+          </div>
+        </div>
+        </div>
+      </main>
       </div>
     </div>
   )

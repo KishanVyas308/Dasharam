@@ -101,82 +101,105 @@ export default function ManageStudent() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white p-6 shadow-md"
-    >
-      {
-        isLoading && <Loading />
-      }
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-        <FaGraduationCap className="mr-2" />
-        Manage Students
-      </h2>
-      {standards.map((subject: any) => (
-        <div key={subject.id} className="mb-6">
-          {/* Header with Standard */}
-          <div
-            className={`cursor-pointer flex justify-between items-center p-4 shadow-sm transition duration-300 ${
-              expandedStandard === subject.id ? "bg-gray-100" : "bg-gray-200 hover:bg-gray-300"
-            }`}
-            onClick={() => toggleExpandStandard(subject.id)}
-          >
-            <h3 className="text-lg font-semibold text-gray-700">{subject.standard}</h3>
-            {expandedStandard === subject.id ? <FaChevronUp /> : <FaChevronDown />}
+    <div className="container mx-auto">
+      {isLoading && <Loading />}
+      
+      <div className="bg-white rounded-lg shadow-lg p-6 mb-8 border border-indigo-200">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center border-b pb-4">
+          <FaGraduationCap className="text-indigo-600 mr-3" />
+          Student Management Dashboard
+        </h2>
+        
+        {standards.length === 0 ? (
+          <div className="text-center py-8 bg-gray-50 rounded-lg">
+            <p className="text-gray-500">No classes available. Add classes to view students.</p>
           </div>
+        ) : (
+          <div className="space-y-4">
+            {standards.map((subject: any) => (
+              <div key={subject.id} className="border rounded-lg overflow-hidden">
+                <div
+                  className={`cursor-pointer flex justify-between items-center p-4 transition-all duration-300 ${
+                    expandedStandard === subject.id 
+                      ? "bg-indigo-50 border-b" 
+                      : "bg-gray-50 hover:bg-gray-100"
+                  }`}
+                  onClick={() => toggleExpandStandard(subject.id)}
+                >
+                  <div className="flex items-center">
+                    <span className="text-lg font-medium text-gray-800">{subject.standard}</span>
+                    <span className="ml-3 bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                      {subject.students.length} students
+                    </span>
+                  </div>
+                  <div className="text-indigo-600">
+                    {expandedStandard === subject.id ? <FaChevronUp /> : <FaChevronDown />}
+                  </div>
+                </div>
 
-          {/* Expandable Table */}
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={
-              expandedStandard === subject.id
-                ? { height: "auto", opacity: 1 }
-                : { height: 0, opacity: 0 }
-            }
-            transition={{ duration: 0.4 }}
-            className={`${expandedStandard === subject.id ? "bg-gray-100" : ""}`}
-          >
-            {expandedStandard === subject.id && (
-              <table className="w-full mt-2 border-collapse">
-                <thead>
-                  <tr className="border-b text-left">
-                    <th className="p-2 border">Sr No</th>
-                    <th className="p-2 border">Name</th>
-                    <th className="p-2 border">GR No</th>
-                    <th className="p-2 border">Parent Mobile No</th>
-                    <th className="p-2 border">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {subject.students.map((id: any, index: number) => {
-                    const student = students.find((student: any) => student.id === id)
-                    return (
-                      <tr key={id} className="border-b hover:bg-gray-50">
-                        <td className="p-2 border">{index + 1}</td>
-                        <td className="p-2 border">{student?.name || "Unknown"}</td>
-                        <td className="p-2 border">{student?.grno || "N/A"}</td>
-                        <td className="p-2 border">{student?.parentMobile || "N/A"}</td>
-                        <td className="p-2 border">
-                          <button
-                            onClick={() => {handleDeleteStudent(id, subject.id) 
-                              console.log("delete student", id, subject.id);
-                              
-                            }}
-                            className="text-red-500 hover:text-red-700 transition duration-200"
-                          >
-                            <FaTrash />
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            )}
-          </motion.div>
-        </div>
-      ))}
-    </motion.div>
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={expandedStandard === subject.id 
+                    ? { height: "auto", opacity: 1 } 
+                    : { height: 0, opacity: 0 }
+                  }
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  {expandedStandard === subject.id && (
+                    <div className="p-4">
+                      {subject.students.length === 0 ? (
+                        <p className="text-center text-gray-500 py-4">No students in this class</p>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm text-left">
+                            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                              <tr>
+                                <th className="px-4 py-3">Sr No</th>
+                                <th className="px-4 py-3">Name</th>
+                                <th className="px-4 py-3">GR No</th>
+                                <th className="px-4 py-3">Parent Mobile</th>
+                                <th className="px-4 py-3">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {subject.students.map((id: any, index: number) => {
+                                const student = students.find((student: any) => student.id === id)
+                                return (
+                                  <tr key={id} className="bg-white border-b hover:bg-gray-50">
+                                    <td className="px-4 py-3">{index + 1}</td>
+                                    <td className="px-4 py-3 font-medium">{student?.name || "Unknown"}</td>
+                                    <td className="px-4 py-3">{student?.grno || "N/A"}</td>
+                                    <td className="px-4 py-3">{student?.parentMobileNo || "N/A"}</td>
+                                    <td className="px-4 py-3">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          if (window.confirm('Are you sure you want to delete this student?')) {
+                                            handleDeleteStudent(id, subject.id);
+                                          }
+                                        }}
+                                        className="p-2 text-red-500 bg-red-50 rounded-full hover:bg-red-100 transition-colors"
+                                        title="Delete Student"
+                                      >
+                                        <FaTrash size={14} />
+                                      </button>
+                                    </td>
+                                  </tr>
+                                )
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
