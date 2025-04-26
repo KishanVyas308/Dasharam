@@ -41,7 +41,6 @@ export default function AddTest() {
   const [selectedStandard, setSelectedStandard] = useState('')
   const [selectedSubject, setSelectedSubject] = useState('')
   const [totalMarks, setTotalMarks] = useState('100')
-  const [passingMarks, setPassingMarks] = useState('35')
   const [takenDate, setTakenDate] = useState(new Date().toISOString().split('T')[0])
   
   // Student management
@@ -77,9 +76,8 @@ export default function AddTest() {
 
   useEffect(() => {
     // Create a mark distribution visualization
-    const passingPercentage = parseInt(passingMarks) || 35
     const total = parseInt(totalMarks) || 100
-    const passingValue = (total * passingPercentage) / 100
+    const passingValue = (total * 35) / 100
 
     const excellent = Object.values(studentsMarks).filter(mark => 
       parseInt(mark) >= (total * 80) / 100
@@ -100,7 +98,7 @@ export default function AddTest() {
     ).length
 
     setMarkDistribution({ excellent, good, average, poor })
-  }, [studentsMarks, totalMarks, passingMarks])
+  }, [studentsMarks, totalMarks])
 
   const handleStdChange = (stdId: string) => {
     const selectedStd = stdSub.find((std: any) => std.id === stdId)
@@ -273,15 +271,8 @@ export default function AddTest() {
       return false
     }
     
-    if (!passingMarks || parseInt(passingMarks) <= 0) {
-      toast.error('Passing percentage must be greater than 0')
-      return false
-    }
     
-    if (parseInt(passingMarks) > 100) {
-      toast.error('Passing percentage cannot be greater than 100')
-      return false
-    }
+  
     
     if (!takenDate) {
       toast.error('Test date is required')
@@ -352,7 +343,6 @@ export default function AddTest() {
         standardId: selectedStandard,
         subject: selectedSubject,
         totalMarks,
-        passingPercentage: passingMarks,
         takenDate,
         takenByTeacherId: user?.id || '',
         students: studentsWithMarks
@@ -374,7 +364,6 @@ export default function AddTest() {
         setSelectedStandard('')
         setSelectedSubject('')
         setTotalMarks('100')
-        setPassingMarks('35')
         setTakenDate(new Date().toISOString().split('T')[0])
         setStudentsMarks({})
         setCurrentStep(1)
@@ -526,22 +515,7 @@ export default function AddTest() {
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <label htmlFor="passingMarks" className="block text-sm font-semibold text-gray-700">
-                    Passing Percentage*
-                  </label>
-                  <input
-                    id="passingMarks"
-                    type="number"
-                    value={passingMarks}
-                    onChange={(e) => setPassingMarks(e.target.value)}
-                    placeholder="e.g. 35"
-                    min="1"
-                    max="100"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                    required
-                  />
-                </div>
+              
               </div>
               
               <div className="bg-indigo-50 rounded-lg p-4 mb-6">
@@ -745,8 +719,8 @@ export default function AddTest() {
                         filteredStudents.map((student, index) => {
                           const studentMark = studentsMarks[student.id] || ''
                           const percentage = studentMark ? (parseInt(studentMark) / parseInt(totalMarks)) * 100 : 0
-                          const passingPercentage = parseInt(passingMarks)
-                          const status = !studentMark ? 'not-entered' : percentage >= passingPercentage ? 'pass' : 'fail'
+                          
+                          const status = !studentMark ? 'not-entered' : percentage >= 35 ? 'pass' : 'fail'
                           
                           return (
                             <tr key={student.id} className="hover:bg-gray-50">
