@@ -41,24 +41,6 @@ const AssignTeacher = () => {
     }
   }, [standardId, subjectName, standards])
 
-  const handleAddTeacherToSubject = () => {
-    if (!teacherId) {
-      toast.error("Please select a teacher")
-      return
-    }
-    
-    if (assignedTeachers.includes(teacherId)) {
-      toast.error("This teacher is already assigned to this subject")
-      return
-    }
-    
-    setAssignedTeachers(prev => [...prev, teacherId])
-    setTeacherId("")
-  }
-
-  const handleRemoveTeacherFromSubject = (teacherIdToRemove: string) => {
-    setAssignedTeachers(prev => prev.filter(id => id !== teacherIdToRemove))
-  }
 
   const handleAssignTeachers = async () => {
     if (!standardId) {
@@ -69,17 +51,17 @@ const AssignTeacher = () => {
       toast.error("Please select a subject")
       return
     }
-    if (assignedTeachers.length === 0) {
-      toast.error("Please assign at least one teacher")
+    if (!teacherId) {
+      toast.error("Please select teacher")
       return
     }
 
     setIsLoading(true)
     try {  
-      const res = await axios.post(`${BACKEND_URL}/subject-standard/assign-subject-teachers`, {
+      const res = await axios.post(`${BACKEND_URL}/subject-standard/assign-subject-teacher`, {
         standardId,
         subjectName,
-        teacherIds: assignedTeachers
+        teacherId
       },
       { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       })
@@ -268,7 +250,7 @@ const AssignTeacher = () => {
                     </div>
                   </div>
                   
-                  <button
+                  {/* <button
                     onClick={handleAddTeacherToSubject}
                     disabled={!teacherId}
                     className={`px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all ${
@@ -278,10 +260,10 @@ const AssignTeacher = () => {
                     }`}
                   >
                     <FaPlus />
-                  </button>
+                  </button> */}
                 </div>
                 
-                <div className="mt-4">
+                {/* <div className="mt-4">
                   <h4 className="text-sm font-semibold text-gray-700 mb-2">Assigned Teachers</h4>
                   
                   {assignedTeachers.length === 0 ? (
@@ -307,7 +289,7 @@ const AssignTeacher = () => {
                       </ul>
                     </div>
                   )}
-                </div>
+                </div> */}
               </div>
             )}
             
@@ -318,9 +300,9 @@ const AssignTeacher = () => {
             >
               <button
                 onClick={handleAssignTeachers}
-                disabled={isLoading || !standardId || !subjectName || assignedTeachers.length === 0}
+                disabled={isLoading || !standardId || !subjectName || !teacherId }
                 className={`w-full px-4 py-3 font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all shadow-md ${
-                  isLoading || !standardId || !subjectName || assignedTeachers.length === 0
+                  isLoading || !standardId || !subjectName  || !teacherId
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     : 'bg-indigo-600 text-white hover:bg-indigo-700'
                 }`}
