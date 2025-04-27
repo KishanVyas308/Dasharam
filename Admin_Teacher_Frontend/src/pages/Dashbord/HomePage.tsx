@@ -130,24 +130,29 @@ export default function Dashboard() {
           </div>
 
           {/* Quick Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
-          >
-            {[
-              { label: 'Total Students', value: totalStudents, color: 'bg-blue-500' },
-              { label: 'Total Teachers', value: totalTeachers, color: 'bg-green-500' },
-              // { label: 'Upcoming Events', value: '8', color: 'bg-purple-500' }
-            ].map((stat, i) => (
-              <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
-                <div className={`absolute top-0 left-0 w-1 h-full ${stat.color}`}></div>
-                <p className="text-gray-500 text-sm font-medium">{stat.label}</p>
-                <p className="text-2xl font-bold mt-2 text-gray-800">{stat.value}</p>
-              </div>
-            ))}
-          </motion.div>
+          {user?.role === UserRole.Admin && (
+
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+            >
+              {[
+                { label: 'Total Students', value: totalStudents, color: 'bg-blue-500' },
+                { label: 'Total Teachers', value: totalTeachers, color: 'bg-green-500' },
+                // { label: 'Upcoming Events', value: '8', color: 'bg-purple-500' }
+              ].map((stat, i) => (
+                <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
+                  <div className={`absolute top-0 left-0 w-1 h-full ${stat.color}`}></div>
+                  <p className="text-gray-500 text-sm font-medium">{stat.label}</p>
+                  <p className="text-2xl font-bold mt-2 text-gray-800">{stat.value}</p>
+                </div>
+              ))}
+            </motion.div>
+
+          )}
 
           {/* Main Menu Grid */}
           <motion.div
