@@ -19,7 +19,6 @@ export default function ManageStudent() {
   const [expandedStandard, setExpandedStandard] = useState<string | null>(null)
 
   const [isLoading, setIsLoading] = useState(false)
-
   // Edit modal states
   const [showEditModal, setShowEditModal] = useState(false)
   const [editingStudent, setEditingStudent] = useState<any>(null)
@@ -31,6 +30,7 @@ export default function ManageStudent() {
     standardId: ''
   })
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [isEditLoading, setIsEditLoading] = useState(false)
 
   async function fetchStudents() {
     if (students.length === 0) {
@@ -153,15 +153,16 @@ export default function ManageStudent() {
       return
     }
 
-    if (!editForm.standardId) {
+        if (!editForm.standardId) {
       toast.error("Please select a standard/class")
       return
     }
 
     setShowConfirmDialog(true)
   }
+  
   const confirmUpdate = async () => {
-    setIsLoading(true)
+    setIsEditLoading(true)
     setShowConfirmDialog(false)
 
     console.log("Updating standardId:", editForm.standardId);
@@ -202,7 +203,7 @@ export default function ManageStudent() {
       toast.error(error.response?.data?.message || "Failed to update student")
     }
 
-    setIsLoading(false)
+    setIsEditLoading(false)
   }
 
   return (
@@ -334,10 +335,10 @@ export default function ManageStudent() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">Edit Student</h3>
-                <button
+                <h3 className="text-lg font-semibold text-gray-800">Edit Student</h3>                <button
                   onClick={() => setShowEditModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
+                  disabled={isEditLoading}
+                  className="text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FaTimes size={20} />
                 </button>
@@ -347,12 +348,12 @@ export default function ManageStudent() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Student Name
-                  </label>
-                  <input
+                  </label>                  <input
                     type="text"
                     value={editForm.name}
                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    disabled={isEditLoading}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                     placeholder="Enter student name"
                   />
                 </div>
@@ -360,12 +361,12 @@ export default function ManageStudent() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Parent Name
-                  </label>
-                  <input
+                  </label>                  <input
                     type="text"
                     value={editForm.parentName}
                     onChange={(e) => setEditForm({ ...editForm, parentName: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    disabled={isEditLoading}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                     placeholder="Enter parent name"
                   />
                 </div>
@@ -373,12 +374,12 @@ export default function ManageStudent() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Parent Mobile Number
-                  </label>
-                  <input
+                  </label>                  <input
                     type="tel"
                     value={editForm.parentMobileNo}
                     onChange={(e) => setEditForm({ ...editForm, parentMobileNo: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    disabled={isEditLoading}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                     placeholder="Enter 10-digit mobile number"
                     maxLength={10}
                   />
@@ -387,12 +388,12 @@ export default function ManageStudent() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     GR Number
-                  </label>
-                  <input
+                  </label>                  <input
                     type="text"
                     value={editForm.grno}
                     onChange={(e) => setEditForm({ ...editForm, grno: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    disabled={isEditLoading}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                     placeholder="Enter GR number"
                   />
                 </div>
@@ -400,14 +401,14 @@ export default function ManageStudent() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Class/Standard
-                  </label>
-                  <select
+                  </label>                  <select
                     value={editForm.standardId}
                     onChange={(e) => {
                       setEditForm({ ...editForm, standardId: e.target.value });
                       console.log("Selected standardId:", e.target.value);
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    disabled={isEditLoading}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
                     <option value="">Select a class</option>
                     {standards.map((standard: any) => (
@@ -417,21 +418,30 @@ export default function ManageStudent() {
                     ))}
                   </select>
                 </div>
-              </div>
-
-              <div className="flex justify-end space-x-3 mt-6">
+              </div>              <div className="flex justify-end space-x-3 mt-6">
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="px-4 py-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                  disabled={isEditLoading}
+                  className="px-4 py-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleUpdateStudent}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center"
+                  disabled={isEditLoading}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <FaSave className="mr-2" size={14} />
-                  Update Student
+                  {isEditLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <FaSave className="mr-2" size={14} />
+                      Update Student
+                    </>
+                  )}
                 </button>
               </div>
             </motion.div>
@@ -460,20 +470,27 @@ export default function ManageStudent() {
                 </h3>
                 <p className="text-gray-600 mb-6">
                   Are you sure you want to update this student's information?
-                </p>
-
-                <div className="flex justify-center space-x-3">
+                </p>                <div className="flex justify-center space-x-3">
                   <button
                     onClick={() => setShowConfirmDialog(false)}
-                    className="px-4 py-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                    disabled={isEditLoading}
+                    className="px-4 py-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={confirmUpdate}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                    disabled={isEditLoading}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Confirm
+                    {isEditLoading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Updating...
+                      </>
+                    ) : (
+                      'Confirm'
+                    )}
                   </button>
                 </div>
               </div>
