@@ -40,7 +40,7 @@ export default function ManageStudent() {
       setStudents(data)
     }
     if (standards.length === 0) {
-      setIsLoading(true)
+      setIsLoading(true)  
       const data = await getAllStdSub()
       setIsLoading(false)
       setStandards(data)

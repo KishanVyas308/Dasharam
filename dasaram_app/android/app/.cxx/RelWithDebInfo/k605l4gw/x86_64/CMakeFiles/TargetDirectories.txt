@@ -1,0 +1,2 @@
+D:/All-Project/Freelance/Dasharam/dasaram_app/android/app/.cxx/RelWithDebInfo/k605l4gw/x86_64/CMakeFiles/edit_cache.dir
+D:/All-Project/Freelance/Dasharam/dasaram_app/android/app/.cxx/RelWithDebInfo/k605l4gw/x86_64/CMakeFiles/rebuild_cache.dir

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.dasaram.flutternotification">
+    package="com.x100xTechs.dasaram">
     <application
         android:label="Dasaram"
         android:icon="@mipmap/ic_launcher"

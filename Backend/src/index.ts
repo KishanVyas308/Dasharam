@@ -1,7 +1,6 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
-import serverless from 'serverless-http';
 
 //? rotes import
 import authRoute  from './routes/authRoute'
@@ -53,8 +52,9 @@ app.use(`${api}/notfy`,  notfy); // use in app
 
 
 
-// app.listen(PORT, () => {
-//     console.log(`Server is running on http://localhost:${PORT}`);
-// });
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
 
-export default serverless(app);
+// export default serverless(app);
+// export default serverless(app);
