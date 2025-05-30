@@ -172,6 +172,8 @@ export async function addStudentIdToStdSub(
     studentId: string
 ) {
     try {
+
+        console.log("Adding student ID:", studentId, "to standard ID:", standardId);
         const standardRef = doc(db, "subjectStd", standardId);
         const docSnap = await getDoc(standardRef);
         if (docSnap.exists()) {
@@ -201,6 +203,8 @@ export async function deleteStudentIdFromStdSub(
 ) {
     try {
  
+        console.log("Deleting student ID:", studentId, "from standard ID:", standardId);
+        
         
         const standardRef = doc(db, "subjectStd", standardId);
         const docSnap = await getDoc(standardRef);
@@ -270,6 +274,25 @@ export async function deleteTeacherFromSubjectInStandard(
            
         }
     } catch (error) {
+    }
+}
+
+export async function changeStudentFromOneClassToAnother(
+    studentId: string,
+    oldStandardId: string,
+    newStandardId: string
+) {
+    try {
+        // Remove student from old standard
+        await deleteStudentIdFromStdSub(oldStandardId, studentId);
+
+        // Add student to new standard
+        await addStudentIdToStdSub(newStandardId, studentId);
+
+        return true;
+    } catch (error) {
+        console.error("Error changing student class:", error);
+        return false;
     }
 }
 
