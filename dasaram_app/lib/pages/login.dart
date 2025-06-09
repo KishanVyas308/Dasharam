@@ -134,12 +134,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       return;
     }
 
-    if (grNo.length < 3) {
-      HapticFeedback.lightImpact();
-      ScaffoldMessage.show(context, message: 'Please enter a valid GR Number');
-      return;
-    }
-
     HapticFeedback.selectionClick();
 
     setState(() {
