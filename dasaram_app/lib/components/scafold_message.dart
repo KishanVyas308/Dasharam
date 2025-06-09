@@ -7,12 +7,12 @@ class ScaffoldMessage extends StatelessWidget {
   final SnackBarBehavior behavior;
 
   const ScaffoldMessage({
-    Key? key,
+    super.key,
     required this.message,
     this.backgroundColor = Colors.red,
     this.textStyle = const TextStyle(color: Colors.white),
     this.behavior = SnackBarBehavior.floating,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -14,10 +14,11 @@ class MainPage extends StatefulWidget {
   final String grNo;
   final String stdId;
   final String studentId;
-  List<dynamic> subjects;
-  List<dynamic> tests;
+  final List<dynamic> subjects;
+  final List<dynamic> tests;
 
-  MainPage({
+  const MainPage({
+    super.key,
     required this.name,
     required this.grNo,
     required this.stdId,
@@ -32,11 +33,26 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
+  int _selectedIndex = 0;
   NotificationServices notificationServices = NotificationServices();
+
+  // Local state variables for subjects and tests
+  List<dynamic> subjects = [];
+  List<dynamic> tests = [];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    // Initialize with widget data
+    subjects = List<dynamic>.from(widget.subjects);
+    tests = List<dynamic>.from(widget.tests);
+
     notificationServices.requwstNotificationPermission();
     notificationServices.firebaseInit();
     notificationServices.isTokenRefresh();
@@ -92,7 +108,6 @@ class _MainPageState extends State<MainPage>
   Map<String, bool> newSubjectsMap = {};
   late AnimationController _controller;
   late Animation<double> _animation;
-
   Future<void> _fetchData() async {
     setState(() {
       isLoading = true;
@@ -105,16 +120,16 @@ class _MainPageState extends State<MainPage>
 
       if (cachedSubjectResponse != null && cachedTestData != null) {
         standard = jsonDecode(cachedSubjectResponse)['standard'];
-        final subjects = jsonDecode(cachedSubjectResponse)['subjects'];
-        final tests = jsonDecode(cachedTestData);
+        final fetchedSubjects = jsonDecode(cachedSubjectResponse)['subjects'];
+        final fetchedTests = jsonDecode(cachedTestData);
 
         // Sort tests by uploaded date, new to old
-        tests.sort((a, b) => DateTime.parse(b['takenDate'])
+        fetchedTests.sort((a, b) => DateTime.parse(b['takenDate'])
             .compareTo(DateTime.parse(a['takenDate'])));
 
         setState(() {
-          widget.subjects = subjects;
-          widget.tests = tests;
+          subjects = fetchedSubjects;
+          tests = fetchedTests;
         });
 
         // Fetch new data if internet is on
@@ -144,8 +159,8 @@ class _MainPageState extends State<MainPage>
         }
 
         setState(() {
-          widget.subjects = newSubjects;
-          widget.tests = newTests;
+          subjects = newSubjects;
+          tests = newTests;
         });
 
         await box.put('subjectResponse', subjectResponse.body);
@@ -162,16 +177,16 @@ class _MainPageState extends State<MainPage>
         );
 
         standard = jsonDecode(subjectResponse.body)['standard'];
-        final subjects = jsonDecode(subjectResponse.body)['subjects'];
-        final tests = jsonDecode(testData.body);
+        final fetchedSubjects = jsonDecode(subjectResponse.body)['subjects'];
+        final fetchedTests = jsonDecode(testData.body);
 
         // Sort tests by uploaded date, new to old
-        tests.sort((a, b) => DateTime.parse(b['takenDate'])
+        fetchedTests.sort((a, b) => DateTime.parse(b['takenDate'])
             .compareTo(DateTime.parse(a['takenDate'])));
 
         setState(() {
-          widget.subjects = subjects;
-          widget.tests = tests;
+          subjects = fetchedSubjects;
+          tests = fetchedTests;
         });
 
         await box.put('subjectResponse', subjectResponse.body);
@@ -218,7 +233,7 @@ class _MainPageState extends State<MainPage>
 
   double _calculateSubjectPercentage(String subjectName) {
     final subjectTests =
-        widget.tests.where((test) => test['subject'] == subjectName).toList();
+        tests.where((test) => test['subject'] == subjectName).toList();
     if (subjectTests.isEmpty) return 0.0;
 
     double totalMarks = 0.0;
@@ -243,7 +258,7 @@ class _MainPageState extends State<MainPage>
 
   void _removeSubjectAndTests(String subjectName) {
     newSubjectsMap.remove(subjectName);
-    widget.tests
+    tests
         .where((test) => test['subject'] == subjectName)
         .forEach((test) => newTestsMap.remove(test['id']));
     Hive.box('dataBox').put('newTestsMap', newTestsMap);
@@ -267,419 +282,486 @@ class _MainPageState extends State<MainPage>
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _pages = [
+      _buildHomePage(context),
+      _buildChartsPage(context),
+      _buildSettingsPage(context),
+    ];
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Dasaram',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+      appBar: AppBar(
+        title: Text(
+          'Dasaram',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
-          backgroundColor: Color.fromARGB(255, 18, 32, 47),
-          actions: [
+        ),
+        backgroundColor: Color.fromARGB(255, 18, 32, 47),
+        actions: [
+          if (_selectedIndex == 2)
             IconButton(
               icon: Icon(Icons.logout),
               onPressed: () async => await _logout(context),
               style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all(Colors.white),
+                foregroundColor: WidgetStateProperty.all(Colors.white),
+              ),
+            ),
+        ],
+      ),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Colors.white,
+                ),
+              ),
+            )
+          : _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Color.fromARGB(255, 18, 32, 47),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white54,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart),
+            label: 'Charts',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHomePage(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(color: Color.fromARGB(255, 28, 40, 51)),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Hello, ${widget.name}',
+                  style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Roboto')),
+              Text('Gr No: ${widget.grNo}',
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white70,
+                      fontFamily: 'Roboto')),
+              Text('Standard: ${subjects.isEmpty ? 'Loading...' : standard}',
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white70,
+                      fontFamily: 'Roboto')),
+            ],
+          ),
+          SizedBox(height: 20),
+          Text('Subjects',
+              style: TextStyle(
+                  fontSize: 21,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontFamily: 'Roboto')),
+          Expanded(
+            child: ListView.builder(
+              itemCount: subjects.length,
+              itemBuilder: (context, index) {
+                final subject = subjects[index];
+                final subjectPercentage =
+                    _calculateSubjectPercentage(subject['name']);
+                final percentageColor = subjectPercentage < 35
+                    ? Colors.red
+                    : subjectPercentage < 60
+                        ? Colors.yellow
+                        : Colors.green;
+                return AnimatedBuilder(
+                  animation: _animation,
+                  builder: (context, child) {
+                    return Card(
+                      color: newSubjectsMap.containsKey(subject['name'])
+                          ? Colors.deepPurple
+                          : Color.fromARGB(255, 36, 49, 60),
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: newSubjectsMap.containsKey(subject['name'])
+                              ? Colors.white.withOpacity(_animation.value)
+                              : Color.fromARGB(255, 18, 32, 47),
+                          width: 1.5,
+                        ),
+                      ),
+                      margin: EdgeInsets.symmetric(vertical: 8.0),
+                      child: Stack(
+                        children: [
+                          ListTile(
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 0.0),
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  subject['name'],
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text(
+                                  '${subjectPercentage.toStringAsFixed(2)}%',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: percentageColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                  color: Color.fromARGB(255, 18, 32, 47),
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            onTap: () {
+                              final subjectTests = tests
+                                  .where((test) =>
+                                      test['subject'] == subject['name'])
+                                  .toList();
+                              showModalBottomSheet(
+                                context: context,
+                                backgroundColor:
+                                    Color.fromARGB(255, 28, 40, 51),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(25.0)),
+                                ),
+                                builder: (context) => Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: ListView.builder(
+                                    itemCount: subjectTests.length,
+                                    itemBuilder: (context, testIndex) {
+                                      final test = subjectTests[testIndex];
+                                      final student = test['students']
+                                          .firstWhere(
+                                              (student) =>
+                                                  student['studentId'] ==
+                                                  widget.studentId,
+                                              orElse: () => {'marks': '0'});
+                                      final percentage =
+                                          ((int.parse(student['marks']) /
+                                                      int.parse(
+                                                          test['totalMarks'])) *
+                                                  100)
+                                              .toStringAsFixed(2);
+                                      final percentageColor =
+                                          double.parse(percentage) < 35
+                                              ? Colors.red
+                                              : double.parse(percentage) < 60
+                                                  ? Colors.yellow
+                                                  : Colors.green;
+                                      return Card(
+                                        color: newTestsMap
+                                                .containsKey(test['id'])
+                                            ? Colors.deepPurple
+                                            : Color.fromARGB(255, 36, 49, 60),
+                                        elevation: 2,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 8.0),
+                                        child: ListTile(
+                                          contentPadding: EdgeInsets.symmetric(
+                                              horizontal: 16.0, vertical: 8.0),
+                                          title: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Test: ${test['name']}',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              Text(
+                                                '$percentage%',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: percentageColor,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          subtitle: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Total Marks: ${test['totalMarks']}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white70,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Marks: ${(test['students'].firstWhere((student) => student['studentId'] == widget.studentId, orElse: () => {
+                                                      'marks': '0'
+                                                    }))['marks']}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white70,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Date: ${(test['takenDate']).toString().substring(0, 10).split('-').reversed.join('-')}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white70,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ).whenComplete(() {
+                                setState(() {
+                                  _removeSubjectAndTests(subject['name']);
+                                  _checkAllNewTests();
+                                });
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          SizedBox(height: 20),
+          Center(
+            child: GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Color.fromARGB(255, 28, 40, 51),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(25.0),
+                    ),
+                  ),
+                  builder: (context) => Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Developers',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              'https://ugc.production.linktr.ee/da71d0eb-b447-4e93-8b94-1448d508ff37_WhatsApp-Image-2024-08-26-at-18.40.49-b4376253.jpeg?io=true&size=avatar-v3_0',
+                            ),
+                          ),
+                          title: Text(
+                            'Kishan Vyas',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          subtitle: Text(
+                            'App & Web Developer',
+                            style: TextStyle(
+                              color: Colors.white70,
+                            ),
+                          ),
+                          trailing: ElevatedButton(
+                            onPressed: () {
+                              launch('https://linktr.ee/kishanvyas');
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: Text(
+                              'Show detail',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              'https://ugc.production.linktr.ee/8edd7bde-06ea-405a-ac57-f5b6819dd577_1000124112.jpeg?io=true&size=avatar-v3_0',
+                            ),
+                          ),
+                          title: Text(
+                            'Nit Sanghani',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          subtitle: Text(
+                            'Web Developer',
+                            style: TextStyle(
+                              color: Colors.white70,
+                            ),
+                          ),
+                          trailing: ElevatedButton(
+                            onPressed: () {
+                              launch('https://linktr.ee/Nit_Patel');
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: Text(
+                              'Show detail',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              child: Text(
+                'Developed by',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChartsPage(BuildContext context) {
+    // Placeholder for chart UI, can be replaced with a real chart widget
+    return Container(
+      color: Color.fromARGB(255, 28, 40, 51),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.bar_chart, color: Colors.white, size: 80),
+            SizedBox(height: 20),
+            Text(
+              'Charts & Analytics Coming Soon!',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Visualize your progress and performance here.',
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsPage(BuildContext context) {
+    return Container(
+      color: Color.fromARGB(255, 28, 40, 51),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.settings, color: Colors.white, size: 80),
+            SizedBox(height: 20),
+            Text(
+              'Settings',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Manage your account and preferences here.',
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 30),
+            ElevatedButton.icon(
+              onPressed: () async => await _logout(context),
+              icon: Icon(Icons.logout),
+              label: Text('Logout'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               ),
             ),
           ],
         ),
-        body: isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Colors.white,
-                  ),
-                ),
-              )
-            : Container(
-                decoration:
-                    BoxDecoration(color: Color.fromARGB(255, 28, 40, 51)),
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Hello, ${widget.name}',
-                              style: TextStyle(
-                                  fontSize: 24,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Roboto')),
-                          Text('Gr No: ${widget.grNo}',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white70,
-                                  fontFamily: 'Roboto')),
-                          Text(
-                              'Standard: ${widget.subjects.isEmpty ? 'Loading...' : standard}',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white70,
-                                  fontFamily: 'Roboto')),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Text('Subjects',
-                          style: TextStyle(
-                              fontSize: 21,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontFamily: 'Roboto')),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: widget.subjects.length,
-                          itemBuilder: (context, index) {
-                            final subject = widget.subjects[index];
-                            final subjectPercentage =
-                                _calculateSubjectPercentage(subject['name']);
-                            final percentageColor = subjectPercentage < 35
-                                ? Colors.red
-                                : subjectPercentage < 60
-                                    ? Colors.yellow
-                                    : Colors.green;
-                            return AnimatedBuilder(
-                              animation: _animation,
-                              builder: (context, child) {
-                                return Card(
-                                  color: newSubjectsMap
-                                          .containsKey(subject['name'])
-                                      ? Colors.deepPurple
-                                      : Color.fromARGB(255, 36, 49, 60),
-                                  elevation: 1,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    side: BorderSide(
-                                      color: newSubjectsMap
-                                              .containsKey(subject['name'])
-                                          ? Colors.white
-                                              .withOpacity(_animation.value)
-                                          : Color.fromARGB(255, 18, 32, 47),
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  margin: EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Stack(
-                                    children: [
-                                      ListTile(
-                                        contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 16.0, vertical: 0.0),
-                                        title: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              subject['name'],
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            Text(
-                                              '${subjectPercentage.toStringAsFixed(2)}%',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                color: percentageColor,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          side: BorderSide(
-                                              color: Color.fromARGB(
-                                                  255, 18, 32, 47),
-                                              width: 1),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        onTap: () {
-                                          final subjectTests = widget.tests
-                                              .where((test) =>
-                                                  test['subject'] ==
-                                                  subject['name'])
-                                              .toList();
-                                          showModalBottomSheet(
-                                            context: context,
-                                            backgroundColor:
-                                                Color.fromARGB(255, 28, 40, 51),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.vertical(
-                                                      top: Radius.circular(
-                                                          25.0)),
-                                            ),
-                                            builder: (context) => Padding(
-                                              padding:
-                                                  const EdgeInsets.all(16.0),
-                                              child: ListView.builder(
-                                                itemCount: subjectTests.length,
-                                                itemBuilder:
-                                                    (context, testIndex) {
-                                                  final test =
-                                                      subjectTests[testIndex];
-                                                  final student = test[
-                                                          'students']
-                                                      .firstWhere(
-                                                          (student) =>
-                                                              student[
-                                                                  'studentId'] ==
-                                                              widget.studentId,
-                                                          orElse: () => {
-                                                                'marks': '0',
-                                                              });
-                                                  final percentage = ((int.parse(
-                                                                  student[
-                                                                      'marks']) /
-                                                              int.parse(test[
-                                                                  'totalMarks'])) *
-                                                          100)
-                                                      .toStringAsFixed(2);
-                                                  final percentageColor = double
-                                                              .parse(
-                                                                  percentage) <
-                                                          35
-                                                      ? Colors.red
-                                                      : double.parse(
-                                                                  percentage) <
-                                                              60
-                                                          ? Colors.yellow
-                                                          : Colors.green;
-                                                  return Card(
-                                                    color: newTestsMap
-                                                            .containsKey(
-                                                                test['id'])
-                                                        ? Colors.deepPurple
-                                                        : Color.fromARGB(
-                                                            255, 36, 49, 60),
-                                                    elevation: 2,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                    margin:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 8.0),
-                                                    child: ListTile(
-                                                      contentPadding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 16.0,
-                                                              vertical: 8.0),
-                                                      title: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            'Test: ${test['name']}',
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            '$percentage%',
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  percentageColor,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      subtitle: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            'Total Marks: ${test['totalMarks']}',
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors
-                                                                  .white70,
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            'Marks: ${(test['students'].firstWhere((student) => student['studentId'] == widget.studentId, orElse: () => {
-                                                                  'marks': '0'
-                                                                }))['marks']}',
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors
-                                                                  .white70,
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            'Date: ${(test['takenDate']).toString().substring(0, 10).split('-').reversed.join('-')}',
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors
-                                                                  .white70,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                          ).whenComplete(() {
-                                            setState(() {
-                                              _removeSubjectAndTests(
-                                                  subject['name']);
-                                              _checkAllNewTests();
-                                            });
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Center(
-                        child: GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              backgroundColor: Color.fromARGB(255, 28, 40, 51),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(25.0),
-                                ),
-                              ),
-                              builder: (context) => Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Developers',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    SizedBox(height: 10),
-                                    ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                          'https://ugc.production.linktr.ee/da71d0eb-b447-4e93-8b94-1448d508ff37_WhatsApp-Image-2024-08-26-at-18.40.49-b4376253.jpeg?io=true&size=avatar-v3_0',
-                                        ),
-                                      ),
-                                      title: Text(
-                                        'Kishan Vyas',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      subtitle: Text(
-                                        'App & Web Developer',
-                                        style: TextStyle(
-                                          color: Colors.white70,
-                                        ),
-                                      ),
-                                      trailing: ElevatedButton(
-                                        onPressed: () {
-                                          launch(
-                                              'https://linktr.ee/kishanvyas');
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'Show detail',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                          'https://ugc.production.linktr.ee/8edd7bde-06ea-405a-ac57-f5b6819dd577_1000124112.jpeg?io=true&size=avatar-v3_0',
-                                        ),
-                                      ),
-                                      title: Text(
-                                        'Nit Sanghani',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      subtitle: Text(
-                                        'Web Developer',
-                                        style: TextStyle(
-                                          color: Colors.white70,
-                                        ),
-                                      ),
-                                      trailing: ElevatedButton(
-                                        onPressed: () {
-                                          launch('https://linktr.ee/Nit_Patel');
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'Show detail',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            'Developed by',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white70,
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ]),
-              ));
+      ),
+    );
   }
 }

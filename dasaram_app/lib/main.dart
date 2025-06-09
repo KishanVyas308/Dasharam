@@ -3,7 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dasaram_app/pages/login.dart';
-import 'package:dasaram_app/pages/home_page.dart';
+import 'package:dasaram_app/pages/main_navigation.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -53,16 +53,16 @@ class MyApp extends StatelessWidget {
             final box = snapshot.data!;
             final user = box.get('user');
             if (user != null) {
-              return MainPage(
+              return MainNavigationPage(
                 name: user['name'],
                 grNo: user['grno'],
                 studentId: user['studentId'],
                 stdId: user['standardId'],
-                subjects: [], // Initially empty, will be fetched in MainPage
-                tests: [], // Initially empty, will be fetched in MainPage
+                subjects: [], // Initially empty, will be fetched in MainNavigationPage
+                tests: [], // Initially empty, will be fetched in MainNavigationPage
               );
             } else {
-              return LoginPage();
+              return const LoginPage();
             }
           } else {
             return LoginPage();
