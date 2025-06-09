@@ -36,8 +36,7 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage>
-    with TickerProviderStateMixin {
+class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   int _selectedIndex = 0;
   NotificationServices notificationServices = NotificationServices();
 
@@ -452,7 +451,9 @@ class _MainPageState extends State<MainPage>
 
           // Main content
           SafeArea(
-            child: isLoading ? _buildModernLoadingScreen() : _pages[_selectedIndex],
+            child: isLoading
+                ? _buildModernLoadingScreen()
+                : _pages[_selectedIndex],
           ),
         ],
       ),
@@ -710,16 +711,26 @@ class _MainPageState extends State<MainPage>
 
     return Row(
       children: [
-        Expanded(child: _buildStatCard('Subjects', totalSubjects.toString(), Icons.book_rounded, const Color(0xFF6366F1))),
+        Expanded(
+            child: _buildStatCard('Subjects', totalSubjects.toString(),
+                Icons.book_rounded, const Color(0xFF6366F1))),
         const SizedBox(width: 16),
-        Expanded(child: _buildStatCard('Tests', totalTests.toString(), Icons.quiz_rounded, const Color(0xFF8B5CF6))),
+        Expanded(
+            child: _buildStatCard('Tests', totalTests.toString(),
+                Icons.quiz_rounded, const Color(0xFF8B5CF6))),
         const SizedBox(width: 16),
-        Expanded(child: _buildStatCard('Average', '${averagePercentage.toStringAsFixed(1)}%', Icons.trending_up_rounded, const Color(0xFF10B981))),
+        Expanded(
+            child: _buildStatCard(
+                'Average',
+                '${averagePercentage.toStringAsFixed(1)}%',
+                Icons.trending_up_rounded,
+                const Color(0xFF10B981))),
       ],
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String title, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -786,7 +797,8 @@ class _MainPageState extends State<MainPage>
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.analytics_rounded, color: Colors.white, size: 20),
+                child: const Icon(Icons.analytics_rounded,
+                    color: Colors.white, size: 20),
               ),
               const SizedBox(width: 16),
               Text(
@@ -841,9 +853,10 @@ class _MainPageState extends State<MainPage>
           itemCount: subjects.length,
           itemBuilder: (context, index) {
             final subject = subjects[index];
-            final subjectPercentage = _calculateSubjectPercentage(subject['name']);
+            final subjectPercentage =
+                _calculateSubjectPercentage(subject['name']);
             final percentageColor = _getPerformanceColor(subjectPercentage);
-            
+
             return AnimatedBuilder(
               animation: _floatingAnimation,
               builder: (context, child) {
@@ -856,7 +869,8 @@ class _MainPageState extends State<MainPage>
                         : Colors.white.withOpacity(0.05),
                     border: Border.all(
                       color: newSubjectsMap.containsKey(subject['name'])
-                          ? Color.lerp(const Color(0xFF6366F1), Colors.white, _floatingAnimation.value)!
+                          ? Color.lerp(const Color(0xFF6366F1), Colors.white,
+                              _floatingAnimation.value)!
                           : Colors.white.withOpacity(0.1),
                       width: 1.5,
                     ),
@@ -872,7 +886,10 @@ class _MainPageState extends State<MainPage>
                           height: 50,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [percentageColor, percentageColor.withOpacity(0.7)],
+                              colors: [
+                                percentageColor,
+                                percentageColor.withOpacity(0.7)
+                              ],
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -984,10 +1001,10 @@ class _MainPageState extends State<MainPage>
 
   double _calculateOverallPercentage() {
     if (tests.isEmpty) return 0.0;
-    
+
     double totalMarks = 0.0;
     double obtainedMarks = 0.0;
-    
+
     for (var test in tests) {
       totalMarks += double.parse(test['totalMarks']);
       final student = test['students'].firstWhere(
@@ -996,7 +1013,7 @@ class _MainPageState extends State<MainPage>
       );
       obtainedMarks += double.parse(student['marks']);
     }
-    
+
     return totalMarks > 0 ? (obtainedMarks / totalMarks) * 100 : 0.0;
   }
 
@@ -1008,10 +1025,9 @@ class _MainPageState extends State<MainPage>
   }
 
   void _showSubjectDetails(dynamic subject) {
-    final subjectTests = tests
-        .where((test) => test['subject'] == subject['name'])
-        .toList();
-    
+    final subjectTests =
+        tests.where((test) => test['subject'] == subject['name']).toList();
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -1050,7 +1066,7 @@ class _MainPageState extends State<MainPage>
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // Header
                   Row(
                     children: [
@@ -1097,7 +1113,7 @@ class _MainPageState extends State<MainPage>
                     ],
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Tests list
                   Expanded(
                     child: ListView.builder(
@@ -1112,8 +1128,9 @@ class _MainPageState extends State<MainPage>
                                     int.parse(test['totalMarks'])) *
                                 100)
                             .toStringAsFixed(1);
-                        final percentageColor = _getPerformanceColor(double.parse(percentage));
-                        
+                        final percentageColor =
+                            _getPerformanceColor(double.parse(percentage));
+
                         return Container(
                           margin: const EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
@@ -1131,7 +1148,8 @@ class _MainPageState extends State<MainPage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
                                       child: Text(
@@ -1274,7 +1292,7 @@ class _MainPageState extends State<MainPage>
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   Text(
                     'Development Team',
                     style: GoogleFonts.inter(
@@ -1285,7 +1303,7 @@ class _MainPageState extends State<MainPage>
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   _buildDeveloperCard(
                     'Kishan Vyas',
                     'App & Web Developer',
@@ -1308,7 +1326,8 @@ class _MainPageState extends State<MainPage>
     );
   }
 
-  Widget _buildDeveloperCard(String name, String role, String imageUrl, String linkUrl) {
+  Widget _buildDeveloperCard(
+      String name, String role, String imageUrl, String linkUrl) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1523,8 +1542,10 @@ class _MainPageState extends State<MainPage>
                 ),
                 titlesData: FlTitlesData(
                   show: true,
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -1672,7 +1693,10 @@ class _MainPageState extends State<MainPage>
                           return Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Text(
-                              subjects[value.toInt()]['name'].toString().length > 8
+                              subjects[value.toInt()]['name']
+                                          .toString()
+                                          .length >
+                                      8
                                   ? '${subjects[value.toInt()]['name'].toString().substring(0, 8)}...'
                                   : subjects[value.toInt()]['name'].toString(),
                               style: const TextStyle(
@@ -1705,8 +1729,10 @@ class _MainPageState extends State<MainPage>
                       },
                     ),
                   ),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 ),
                 borderData: FlBorderData(
                   show: false,
@@ -1764,7 +1790,8 @@ class _MainPageState extends State<MainPage>
       (student) => student['studentId'] == widget.studentId,
       orElse: () => {'marks': '0'},
     );
-    final percentage = ((int.parse(student['marks']) / int.parse(test['totalMarks'])) * 100);
+    final percentage =
+        ((int.parse(student['marks']) / int.parse(test['totalMarks'])) * 100);
     final color = _getPerformanceColor(percentage);
 
     return Container(
@@ -1804,7 +1831,12 @@ class _MainPageState extends State<MainPage>
             ),
           ),
           Text(
-            test['takenDate'].toString().substring(0, 10).split('-').reversed.join('-'),
+            test['takenDate']
+                .toString()
+                .substring(0, 10)
+                .split('-')
+                .reversed
+                .join('-'),
             style: GoogleFonts.inter(
               fontSize: 12,
               color: Colors.white.withOpacity(0.5),
@@ -1818,31 +1850,32 @@ class _MainPageState extends State<MainPage>
 
   List<FlSpot> _getPerformanceSpots() {
     if (tests.isEmpty) return [const FlSpot(0, 0)];
-    
+
     final recentTests = tests.take(5).toList();
     List<FlSpot> spots = [];
-    
+
     for (int i = 0; i < recentTests.length; i++) {
       final test = recentTests[i];
       final student = test['students'].firstWhere(
         (student) => student['studentId'] == widget.studentId,
         orElse: () => {'marks': '0'},
       );
-      final percentage = (int.parse(student['marks']) / int.parse(test['totalMarks'])) * 100;
+      final percentage =
+          (int.parse(student['marks']) / int.parse(test['totalMarks'])) * 100;
       spots.add(FlSpot(i.toDouble(), percentage));
     }
-    
+
     return spots;
   }
 
   List<BarChartGroupData> _getSubjectBarGroups() {
     List<BarChartGroupData> groups = [];
-    
+
     for (int i = 0; i < subjects.length; i++) {
       final subject = subjects[i];
       final percentage = _calculateSubjectPercentage(subject['name']);
       final color = _getPerformanceColor(percentage);
-      
+
       groups.add(
         BarChartGroupData(
           x: i,
@@ -1855,13 +1888,14 @@ class _MainPageState extends State<MainPage>
                 end: Alignment.topCenter,
               ),
               width: 20,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(4)),
             ),
           ],
         ),
       );
     }
-    
+
     return groups;
   }
 
@@ -1993,9 +2027,11 @@ class _MainPageState extends State<MainPage>
           const SizedBox(height: 16),
           _buildProfileItem('GR Number', widget.grNo, Icons.badge_rounded),
           const SizedBox(height: 16),
-          _buildProfileItem('Standard', subjects.isEmpty ? 'Loading...' : standard, Icons.school_rounded),
+          _buildProfileItem('Standard',
+              subjects.isEmpty ? 'Loading...' : standard, Icons.school_rounded),
           const SizedBox(height: 16),
-          _buildProfileItem('Student ID', widget.studentId, Icons.fingerprint_rounded),
+          _buildProfileItem(
+              'Student ID', widget.studentId, Icons.fingerprint_rounded),
         ],
       ),
     );
@@ -2095,7 +2131,8 @@ class _MainPageState extends State<MainPage>
     );
   }
 
-  Widget _buildSettingItem(String title, String subtitle, IconData icon, bool value, Function(bool)? onChanged) {
+  Widget _buildSettingItem(String title, String subtitle, IconData icon,
+      bool value, Function(bool)? onChanged) {
     return Row(
       children: [
         Container(
@@ -2208,7 +2245,8 @@ class _MainPageState extends State<MainPage>
     );
   }
 
-  Widget _buildActionButton(String title, String subtitle, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildActionButton(String title, String subtitle, IconData icon,
+      Color color, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
