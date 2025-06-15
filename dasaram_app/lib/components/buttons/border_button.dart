@@ -11,7 +11,7 @@ class BorderButtonWidget extends StatelessWidget {
   final Color textColor;
 
   const BorderButtonWidget({
-    Key? key,
+    super.key,
     required this.buttonText,
     required this.onPressed,
     this.gradientColors = const [
@@ -26,7 +26,7 @@ class BorderButtonWidget extends StatelessWidget {
     this.fontSize = 16.0,
     this.fontWeight = FontWeight.bold,
     this.textColor = Colors.white,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
